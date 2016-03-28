@@ -1,0 +1,30 @@
+﻿<Window x:Class="AuthMeGUI.EncryptFileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AuthMeGUI"
+        mc:Ignorable="d"
+        Title="Encrypt File" Height="350" Width="600">
+    <Grid>
+        <Border BorderBrush="#FFE2E2E2" BorderThickness="1" HorizontalAlignment="Left" Height="84" Margin="10,18,0,0" VerticalAlignment="Top" Width="572"/>
+        <TextBox x:Name="inputFileTextBox" HorizontalAlignment="Left" Height="23" Margin="124,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="416"/>
+        <TextBox x:Name="outputFileTextBox" HorizontalAlignment="Left" Height="23" Margin="124,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="416"/>
+        <Button x:Name="inputFileButton" Content="..." HorizontalAlignment="Left" Margin="545,36,0,0" VerticalAlignment="Top" Width="18" Click="inputFileButtonPressed"/>
+        <Button x:Name="outputFileButton" Content="..." HorizontalAlignment="Left" Margin="545,68,0,0" VerticalAlignment="Top" Width="18" Click="outputFileButtonPressed"/>
+        <Label x:Name="label" Content="Input File: " HorizontalAlignment="Left" Margin="54,32,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label2" Content="Output File: " HorizontalAlignment="Left" Margin="44,64,0,0" VerticalAlignment="Top"/>
+        <Grid Margin="211,175,200,89" HorizontalAlignment="Center" VerticalAlignment="Center" Height="55" Width="181">
+            <CheckBox x:Name="useLocalKeCheckBox" Content="Double Wrap" ToolTip="Encrypt with both the local key and the service (device) key" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="checkBox_Checked" IsChecked="True" IsEnabled="False" Margin="5,5,0,0"/>
+            <CheckBox x:Name="localWrapStoreCheckBox" Content="Store Wrapped Key Locally" HorizontalAlignment="Left" Margin="5,31,0,0" VerticalAlignment="Top" IsChecked="True" ToolTip="If unchecked, the wrapped (encrypted) key used to encrypt the file will be stored at the service rather than in the meta data of the resulting file"/>
+
+        </Grid>
+        <TextBox x:Name="userIdTextBox" HorizontalAlignment="Left" Height="23" Margin="124,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="219"/>
+        <Label x:Name="label_Copy" Content="Encrypt To UserID:" ToolTip="This is the service User ID (email address) of the account that can decrypt using an AuthMe device" HorizontalAlignment="Left" Margin="13,125,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="encryptButton" Content="Encrypt" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="191,249,0,0" Click="encryptButtonPressed"/>
+        <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="321,249,0,0" VerticalAlignment="Top" Width="75" Click="cancelButtonPressed"/>
+        <TextBlock x:Name="errorTextBlock" HorizontalAlignment="Center" Margin="0,284,-10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="477" TextAlignment="Center" Foreground="#FFC74747"/>
+
+
+    </Grid>
+</Window>

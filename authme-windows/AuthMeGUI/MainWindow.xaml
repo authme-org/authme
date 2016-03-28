@@ -1,0 +1,33 @@
+﻿<Window x:Class="AuthMeGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AuthMeGUI"
+        mc:Ignorable="d"
+        Icon="./authme_icon.png"
+        Title="AuthMe" Height="350" Width="525">
+    <Grid>
+        <TextBox x:Name="URIInput" HorizontalAlignment="Left" Height="23" Margin="104,31,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="312"/>
+        <Label x:Name="URILable" Content="Service URL" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top"/>
+        <ScrollViewer Name="serviceOutputScroller"  Margin="0,0,0,0" Height="74" VerticalScrollBarVisibility="Auto" VerticalAlignment="Bottom" VerticalContentAlignment="Bottom">
+                <TextBlock x:Name="serviceOutputTextBlock" HorizontalAlignment="Left" Height="Auto" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Bottom" Width="492" />
+        </ScrollViewer>
+        <Button x:Name="pingButton" Content="Ping" HorizontalAlignment="Left" Margin="432,34,0,0" VerticalAlignment="Top" Width="75" Click="PingClick"/>
+        <Menu IsMainMenu="True" x:Name="menu" Height="19" VerticalAlignment="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="Encrypt File..." HorizontalAlignment="Left" Click="FileEncryptMenuSelect"/>
+                <MenuItem Header="Decrypt File..." HorizontalAlignment="Left" Click="FileDecryptMenuSelect"/>
+                <Separator/>
+                <MenuItem Header="_Exit" Click="FileExitMenuSelect"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Preferences" HorizontalAlignment="Left" Click="PreferencesMenuSelect" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About" Click="HelpAboutMenuSelect"/>
+            </MenuItem>
+        </Menu>
+
+    </Grid>
+</Window>

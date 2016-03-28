@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="AuthMeGUISetup" Language="1033" Version="0.0.1.0" Manufacturer="Berin Lautenbach" UpgradeCode="b625b715-2bc2-4529-a965-48eafce1ab49">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+  
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes"/>
+
+		<Feature Id="ProductFeature" Title="AuthMeGUISetup" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="StartMenuComponents" />
+		</Feature>
+  
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER"/>
+    <UIRef Id="WixUI_InstallDir"/>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="AuthMe" />
+			</Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="AuthMe" />
+      </Directory>
+		</Directory>
+	</Fragment>
+  
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<Component Id="AuthMe.exe" Guid="*">
+        <File Id="AuthMe.exe" Source="$(var.AuthMeCmd.TargetPath)"/>
+      </Component>
+      <Component Id="AuthMeDLL.dll" Guid="*">
+        <File Id="AuthMeDLL.dll" Source="$(var.AuthMeDLL.TargetPath)"/>
+      </Component>
+      <Component Id="AuthMeGUI.exe" Guid="*">
+        <File Id="AuthMeGUI.exe" Source="$(var.AuthMeGUI.TargetPath)"/>      
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+  
+  <Fragment>
+    <ComponentGroup Id="StartMenuComponents" Directory="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="*">
+        <Shortcut Id="GUIMenuShortcut"
+                  Name="AuthMe GUI"
+                  Description="Encrypt/Decrypt files on the local system"
+                  Target="[#AuthMeGUI.exe]"
+                  WorkingDirectory="INSTALLDIR" />
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\AuthMe\AuthMe" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+</Wix>
