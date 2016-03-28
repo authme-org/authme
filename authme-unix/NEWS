@@ -1,0 +1,8 @@
+March 2015
+==========
+
+This is the first Alpha release of the pauthme module, an experimental
+AuthMe authentication module for PAM.  It is functional, but has very
+early code.
+
+USE THIS WITH CAUTION!

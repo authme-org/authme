@@ -1,0 +1,9 @@
+PAM AuthMe
+---------
+
+This is a simple PAM module to talk to the AuthMe service to
+authenticate an end user.
+
+When a user logs in a web service call is made to the AuthMe service to
+see if the user should be logged on.
+

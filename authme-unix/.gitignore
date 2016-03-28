@@ -1,0 +1,6 @@
+### Things to ignore unique to this directory ###
+pauthme-0.1.pc
+authme
+config.h
+stamp-h1
+/autom4te.cache/

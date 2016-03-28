@@ -1,0 +1,3 @@
+Release 0.2
+	* Small fix (use LDAP_SCOPE_SUBTREE) for older OpenLDAP versions (simon.matter@invoca.ch)
+	* add -lcrypt to link command to remove errors in cron calling PAM
