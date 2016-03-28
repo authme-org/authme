@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BaseURL</key>
+	<string>https://www.readercom.com/AuthMeWS/UserWS/</string>
+	<key>BaseURLDebug</key>
+	<string>http://pluto:8080/AuthMeWS/UserWS/</string>
+	<key>EntryPoints</key>
+	<dict>
+		<key>AddDevice</key>
+		<string>Devices</string>
+		<key>GetDevice</key>
+		<string>Devices</string>
+		<key>GetServiceKey</key>
+		<string>Devices/ServiceKey</string>
+		<key>SetServiceKey</key>
+		<string>Devices/ServiceKey</string>
+		<key>GetDevices</key>
+		<string>Devices/All</string>
+		<key>AuthCheck</key>
+		<string>AuthCheck</string>
+		<key>SignatureSeed</key>
+		<string>SignatureSeed</string>
+	</dict>
+</dict>
+</plist>

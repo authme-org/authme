@@ -1,0 +1,625 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1117EB1A1AA3959500A13D7B /* AuthMe.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1117EB181AA3959500A13D7B /* AuthMe.xcdatamodeld */; };
+		1117EB1D1AA3974200A13D7B /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1117EB1C1AA3974200A13D7B /* Configuration.swift */; };
+		1117EB1F1AA3974300A13D7B /* AuthMeConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1117EB1E1AA3974300A13D7B /* AuthMeConfiguration.swift */; };
+		1117EB211AA3977300A13D7B /* MasterPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1117EB201AA3977300A13D7B /* MasterPassword.swift */; };
+		1117EB241AA3A43E00A13D7B /* AuthListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1117EB231AA3A43E00A13D7B /* AuthListController.swift */; };
+		111C8C531A9AE85A009ADBE2 /* AuthMeAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111C8C521A9AE85A009ADBE2 /* AuthMeAppDelegate.swift */; };
+		111C8C5C1A9AE85A009ADBE2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 111C8C5B1A9AE85A009ADBE2 /* Images.xcassets */; };
+		111C8C5F1A9AE85A009ADBE2 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 111C8C5D1A9AE85A009ADBE2 /* LaunchScreen.xib */; };
+		111C8C6B1A9AE85A009ADBE2 /* AuthMeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111C8C6A1A9AE85A009ADBE2 /* AuthMeTests.swift */; };
+		111C8C751A9AEA2F009ADBE2 /* AuthMe.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 111C8C741A9AEA2F009ADBE2 /* AuthMe.storyboard */; };
+		1142245F1A9D9FFC00C48A2A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142245E1A9D9FFC00C48A2A /* Log.swift */; };
+		114224681A9DA00D00C48A2A /* AESKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 114224611A9DA00D00C48A2A /* AESKey.m */; };
+		114224691A9DA00D00C48A2A /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 114224631A9DA00D00C48A2A /* Base64.m */; };
+		1142246A1A9DA00D00C48A2A /* PKCS5PBBKDF2.m in Sources */ = {isa = PBXBuildFile; fileRef = 114224651A9DA00D00C48A2A /* PKCS5PBBKDF2.m */; };
+		1142246B1A9DA00D00C48A2A /* RSAKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 114224671A9DA00D00C48A2A /* RSAKey.m */; };
+		1184033C1C5DCB6500590B26 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1184033B1C5DCB6500590B26 /* DeviceInfo.swift */; };
+		118403401C5DCF8900590B26 /* DeviceListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1184033F1C5DCF8900590B26 /* DeviceListController.swift */; };
+		1198B4041C78292B007001F5 /* KeyChainPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = 1198B4031C78292B007001F5 /* KeyChainPassword.m */; };
+		11C3F3211A9DA2DD00F9102C /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C3F3201A9DA2DD00F9102C /* CryptoTests.swift */; };
+		11D0B9781AABA106003B1721 /* AuthMeServiceInitialiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D0B9771AABA106003B1721 /* AuthMeServiceInitialiser.swift */; };
+		11D0B97A1AABA88B003B1721 /* AuthMeServiceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D0B9791AABA88B003B1721 /* AuthMeServiceOperation.swift */; };
+		11D0B97C1AABB603003B1721 /* AuthMeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D0B97B1AABB603003B1721 /* AuthMeService.swift */; };
+		11D0B97E1AABB747003B1721 /* AuthMeServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D0B97D1AABB747003B1721 /* AuthMeServiceDelegate.swift */; };
+		11D0B9841AABBB85003B1721 /* ServiceConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11D0B9831AABBB85003B1721 /* ServiceConfig.plist */; };
+		11D0B9871AAD0D2C003B1721 /* SvcSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D0B9861AAD0D2C003B1721 /* SvcSession.swift */; };
+		11E345351C5C8100000EF657 /* AuthMeSign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E345331C5C8100000EF657 /* AuthMeSign.swift */; };
+		11E345361C5C8100000EF657 /* AuthMeSignDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E345341C5C8100000EF657 /* AuthMeSignDelegate.swift */; };
+		11E3453A1C5C825B000EF657 /* ConfigurationDetailMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E345371C5C825B000EF657 /* ConfigurationDetailMenuController.swift */; };
+		11E3453B1C5C825B000EF657 /* ConfigurationMainMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E345381C5C825B000EF657 /* ConfigurationMainMenuController.swift */; };
+		11E3453C1C5C825B000EF657 /* ConfigurationSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E345391C5C825B000EF657 /* ConfigurationSplitViewController.swift */; };
+		11E3453E1C5C8336000EF657 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E3453D1C5C8336000EF657 /* AppConfiguration.swift */; };
+		11E345401C5CA60F000EF657 /* ConfigurationSetup.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11E3453F1C5CA60F000EF657 /* ConfigurationSetup.plist */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		111C8C651A9AE85A009ADBE2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 111C8C451A9AE85A009ADBE2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 111C8C4C1A9AE85A009ADBE2;
+			remoteInfo = AuthMe;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1117EB191AA3959500A13D7B /* AuthMe.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AuthMe.xcdatamodel; sourceTree = "<group>"; };
+		1117EB1C1AA3974200A13D7B /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = Src/Entity/Configuration.swift; sourceTree = "<group>"; };
+		1117EB1E1AA3974300A13D7B /* AuthMeConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeConfiguration.swift; path = Src/Entity/AuthMeConfiguration.swift; sourceTree = "<group>"; };
+		1117EB201AA3977300A13D7B /* MasterPassword.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MasterPassword.swift; path = Src/MasterPassword.swift; sourceTree = "<group>"; };
+		1117EB231AA3A43E00A13D7B /* AuthListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthListController.swift; path = Src/Controllers/AuthListController.swift; sourceTree = "<group>"; };
+		111C8C4D1A9AE85A009ADBE2 /* AuthMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AuthMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		111C8C511A9AE85A009ADBE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		111C8C521A9AE85A009ADBE2 /* AuthMeAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMeAppDelegate.swift; sourceTree = "<group>"; };
+		111C8C5B1A9AE85A009ADBE2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		111C8C5E1A9AE85A009ADBE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		111C8C641A9AE85A009ADBE2 /* AuthMeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AuthMeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		111C8C691A9AE85A009ADBE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		111C8C6A1A9AE85A009ADBE2 /* AuthMeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMeTests.swift; sourceTree = "<group>"; };
+		111C8C741A9AEA2F009ADBE2 /* AuthMe.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AuthMe.storyboard; sourceTree = "<group>"; };
+		1142245E1A9D9FFC00C48A2A /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Log.swift; path = Src/Util/Log.swift; sourceTree = "<group>"; };
+		114224601A9DA00D00C48A2A /* AESKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AESKey.h; path = Src/Crypto/AESKey.h; sourceTree = "<group>"; };
+		114224611A9DA00D00C48A2A /* AESKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AESKey.m; path = Src/Crypto/AESKey.m; sourceTree = "<group>"; };
+		114224621A9DA00D00C48A2A /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Base64.h; path = Src/Crypto/Base64.h; sourceTree = "<group>"; };
+		114224631A9DA00D00C48A2A /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Base64.m; path = Src/Crypto/Base64.m; sourceTree = "<group>"; };
+		114224641A9DA00D00C48A2A /* PKCS5PBBKDF2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PKCS5PBBKDF2.h; path = Src/Crypto/PKCS5PBBKDF2.h; sourceTree = "<group>"; };
+		114224651A9DA00D00C48A2A /* PKCS5PBBKDF2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PKCS5PBBKDF2.m; path = Src/Crypto/PKCS5PBBKDF2.m; sourceTree = "<group>"; };
+		114224661A9DA00D00C48A2A /* RSAKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSAKey.h; path = Src/Crypto/RSAKey.h; sourceTree = "<group>"; };
+		114224671A9DA00D00C48A2A /* RSAKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RSAKey.m; path = Src/Crypto/RSAKey.m; sourceTree = "<group>"; };
+		1184033B1C5DCB6500590B26 /* DeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceInfo.swift; path = Src/Service/Model/DeviceInfo.swift; sourceTree = "<group>"; };
+		1184033F1C5DCF8900590B26 /* DeviceListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceListController.swift; path = Src/Controllers/DeviceListController.swift; sourceTree = "<group>"; };
+		1198B4021C78272F007001F5 /* KeyChainPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyChainPassword.h; path = Src/Crypto/KeyChainPassword.h; sourceTree = "<group>"; };
+		1198B4031C78292B007001F5 /* KeyChainPassword.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeyChainPassword.m; path = Src/Crypto/KeyChainPassword.m; sourceTree = "<group>"; };
+		11C3F3201A9DA2DD00F9102C /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoTests.swift; sourceTree = "<group>"; };
+		11C3F3251A9DA4D000F9102C /* ObjectiveCBridgingHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectiveCBridgingHeader.h; path = Src/ObjectiveCBridgingHeader.h; sourceTree = "<group>"; };
+		11D0B9771AABA106003B1721 /* AuthMeServiceInitialiser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeServiceInitialiser.swift; path = Src/Service/AuthMeServiceInitialiser.swift; sourceTree = "<group>"; };
+		11D0B9791AABA88B003B1721 /* AuthMeServiceOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeServiceOperation.swift; path = Src/Service/AuthMeServiceOperation.swift; sourceTree = "<group>"; };
+		11D0B97B1AABB603003B1721 /* AuthMeService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeService.swift; path = Src/Service/AuthMeService.swift; sourceTree = "<group>"; };
+		11D0B97D1AABB747003B1721 /* AuthMeServiceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeServiceDelegate.swift; path = Src/Service/AuthMeServiceDelegate.swift; sourceTree = "<group>"; };
+		11D0B9831AABBB85003B1721 /* ServiceConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ServiceConfig.plist; sourceTree = "<group>"; };
+		11D0B9861AAD0D2C003B1721 /* SvcSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SvcSession.swift; path = Src/Service/Model/SvcSession.swift; sourceTree = "<group>"; };
+		11E345331C5C8100000EF657 /* AuthMeSign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeSign.swift; path = Src/Service/AuthMeSign.swift; sourceTree = "<group>"; };
+		11E345341C5C8100000EF657 /* AuthMeSignDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeSignDelegate.swift; path = Src/Service/AuthMeSignDelegate.swift; sourceTree = "<group>"; };
+		11E345371C5C825B000EF657 /* ConfigurationDetailMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConfigurationDetailMenuController.swift; path = Src/Controllers/ConfigurationDetailMenuController.swift; sourceTree = "<group>"; };
+		11E345381C5C825B000EF657 /* ConfigurationMainMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConfigurationMainMenuController.swift; path = Src/Controllers/ConfigurationMainMenuController.swift; sourceTree = "<group>"; };
+		11E345391C5C825B000EF657 /* ConfigurationSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConfigurationSplitViewController.swift; path = Src/Controllers/ConfigurationSplitViewController.swift; sourceTree = "<group>"; };
+		11E3453D1C5C8336000EF657 /* AppConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppConfiguration.swift; path = Src/AppConfiguration.swift; sourceTree = "<group>"; };
+		11E3453F1C5CA60F000EF657 /* ConfigurationSetup.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ConfigurationSetup.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		111C8C4A1A9AE85A009ADBE2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		111C8C611A9AE85A009ADBE2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1117EB1B1AA3970A00A13D7B /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				1117EB1E1AA3974300A13D7B /* AuthMeConfiguration.swift */,
+				1117EB1C1AA3974200A13D7B /* Configuration.swift */,
+			);
+			name = Entity;
+			sourceTree = "<group>";
+		};
+		1117EB221AA3A41B00A13D7B /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				11E345371C5C825B000EF657 /* ConfigurationDetailMenuController.swift */,
+				11E345381C5C825B000EF657 /* ConfigurationMainMenuController.swift */,
+				11E345391C5C825B000EF657 /* ConfigurationSplitViewController.swift */,
+				1117EB231AA3A43E00A13D7B /* AuthListController.swift */,
+				1184033F1C5DCF8900590B26 /* DeviceListController.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		111C8C441A9AE85A009ADBE2 = {
+			isa = PBXGroup;
+			children = (
+				111C8C4F1A9AE85A009ADBE2 /* AuthMe */,
+				111C8C671A9AE85A009ADBE2 /* AuthMeTests */,
+				111C8C4E1A9AE85A009ADBE2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		111C8C4E1A9AE85A009ADBE2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				111C8C4D1A9AE85A009ADBE2 /* AuthMe.app */,
+				111C8C641A9AE85A009ADBE2 /* AuthMeTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		111C8C4F1A9AE85A009ADBE2 /* AuthMe */ = {
+			isa = PBXGroup;
+			children = (
+				1117EB221AA3A41B00A13D7B /* Controllers */,
+				111C8C771A9AF016009ADBE2 /* Crypto */,
+				1117EB1B1AA3970A00A13D7B /* Entity */,
+				11D0B9761AABA0B3003B1721 /* Service */,
+				111C8C7A1A9AF7C3009ADBE2 /* Util */,
+				111C8C521A9AE85A009ADBE2 /* AuthMeAppDelegate.swift */,
+				11E3453D1C5C8336000EF657 /* AppConfiguration.swift */,
+				1117EB201AA3977300A13D7B /* MasterPassword.swift */,
+				11C3F3251A9DA4D000F9102C /* ObjectiveCBridgingHeader.h */,
+				111C8C761A9AEA7F009ADBE2 /* Resources */,
+				111C8C501A9AE85A009ADBE2 /* Supporting Files */,
+			);
+			path = AuthMe;
+			sourceTree = "<group>";
+		};
+		111C8C501A9AE85A009ADBE2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				111C8C511A9AE85A009ADBE2 /* Info.plist */,
+				11D0B9831AABBB85003B1721 /* ServiceConfig.plist */,
+				11E3453F1C5CA60F000EF657 /* ConfigurationSetup.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		111C8C671A9AE85A009ADBE2 /* AuthMeTests */ = {
+			isa = PBXGroup;
+			children = (
+				111C8C6A1A9AE85A009ADBE2 /* AuthMeTests.swift */,
+				11C3F3201A9DA2DD00F9102C /* CryptoTests.swift */,
+				111C8C681A9AE85A009ADBE2 /* Supporting Files */,
+			);
+			path = AuthMeTests;
+			sourceTree = "<group>";
+		};
+		111C8C681A9AE85A009ADBE2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				111C8C691A9AE85A009ADBE2 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		111C8C761A9AEA7F009ADBE2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1117EB181AA3959500A13D7B /* AuthMe.xcdatamodeld */,
+				111C8C741A9AEA2F009ADBE2 /* AuthMe.storyboard */,
+				111C8C5B1A9AE85A009ADBE2 /* Images.xcassets */,
+				111C8C5D1A9AE85A009ADBE2 /* LaunchScreen.xib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		111C8C771A9AF016009ADBE2 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				114224601A9DA00D00C48A2A /* AESKey.h */,
+				114224611A9DA00D00C48A2A /* AESKey.m */,
+				114224621A9DA00D00C48A2A /* Base64.h */,
+				114224631A9DA00D00C48A2A /* Base64.m */,
+				1198B4021C78272F007001F5 /* KeyChainPassword.h */,
+				1198B4031C78292B007001F5 /* KeyChainPassword.m */,
+				114224641A9DA00D00C48A2A /* PKCS5PBBKDF2.h */,
+				114224651A9DA00D00C48A2A /* PKCS5PBBKDF2.m */,
+				114224661A9DA00D00C48A2A /* RSAKey.h */,
+				114224671A9DA00D00C48A2A /* RSAKey.m */,
+			);
+			name = Crypto;
+			sourceTree = "<group>";
+		};
+		111C8C7A1A9AF7C3009ADBE2 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				1142245E1A9D9FFC00C48A2A /* Log.swift */,
+			);
+			name = Util;
+			sourceTree = "<group>";
+		};
+		11D0B9761AABA0B3003B1721 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				11D0B9851AAD0D05003B1721 /* Model */,
+				11D0B9771AABA106003B1721 /* AuthMeServiceInitialiser.swift */,
+				11D0B9791AABA88B003B1721 /* AuthMeServiceOperation.swift */,
+				11D0B97B1AABB603003B1721 /* AuthMeService.swift */,
+				11D0B97D1AABB747003B1721 /* AuthMeServiceDelegate.swift */,
+				11E345331C5C8100000EF657 /* AuthMeSign.swift */,
+				11E345341C5C8100000EF657 /* AuthMeSignDelegate.swift */,
+			);
+			name = Service;
+			sourceTree = "<group>";
+		};
+		11D0B9851AAD0D05003B1721 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				11D0B9861AAD0D2C003B1721 /* SvcSession.swift */,
+				1184033B1C5DCB6500590B26 /* DeviceInfo.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		111C8C4C1A9AE85A009ADBE2 /* AuthMe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 111C8C6E1A9AE85A009ADBE2 /* Build configuration list for PBXNativeTarget "AuthMe" */;
+			buildPhases = (
+				111C8C491A9AE85A009ADBE2 /* Sources */,
+				111C8C4A1A9AE85A009ADBE2 /* Frameworks */,
+				111C8C4B1A9AE85A009ADBE2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AuthMe;
+			productName = AuthMe;
+			productReference = 111C8C4D1A9AE85A009ADBE2 /* AuthMe.app */;
+			productType = "com.apple.product-type.application";
+		};
+		111C8C631A9AE85A009ADBE2 /* AuthMeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 111C8C711A9AE85A009ADBE2 /* Build configuration list for PBXNativeTarget "AuthMeTests" */;
+			buildPhases = (
+				111C8C601A9AE85A009ADBE2 /* Sources */,
+				111C8C611A9AE85A009ADBE2 /* Frameworks */,
+				111C8C621A9AE85A009ADBE2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				111C8C661A9AE85A009ADBE2 /* PBXTargetDependency */,
+			);
+			name = AuthMeTests;
+			productName = AuthMeTests;
+			productReference = 111C8C641A9AE85A009ADBE2 /* AuthMeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		111C8C451A9AE85A009ADBE2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftMigration = 0720;
+				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = "Berin Lautenbach";
+				TargetAttributes = {
+					111C8C4C1A9AE85A009ADBE2 = {
+						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = J9M386KYM4;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
+					};
+					111C8C631A9AE85A009ADBE2 = {
+						CreatedOnToolsVersion = 6.1.1;
+						TestTargetID = 111C8C4C1A9AE85A009ADBE2;
+					};
+				};
+			};
+			buildConfigurationList = 111C8C481A9AE85A009ADBE2 /* Build configuration list for PBXProject "AuthMe" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 111C8C441A9AE85A009ADBE2;
+			productRefGroup = 111C8C4E1A9AE85A009ADBE2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				111C8C4C1A9AE85A009ADBE2 /* AuthMe */,
+				111C8C631A9AE85A009ADBE2 /* AuthMeTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		111C8C4B1A9AE85A009ADBE2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11D0B9841AABBB85003B1721 /* ServiceConfig.plist in Resources */,
+				111C8C751A9AEA2F009ADBE2 /* AuthMe.storyboard in Resources */,
+				111C8C5F1A9AE85A009ADBE2 /* LaunchScreen.xib in Resources */,
+				111C8C5C1A9AE85A009ADBE2 /* Images.xcassets in Resources */,
+				11E345401C5CA60F000EF657 /* ConfigurationSetup.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		111C8C621A9AE85A009ADBE2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		111C8C491A9AE85A009ADBE2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1142246B1A9DA00D00C48A2A /* RSAKey.m in Sources */,
+				114224691A9DA00D00C48A2A /* Base64.m in Sources */,
+				11E3453B1C5C825B000EF657 /* ConfigurationMainMenuController.swift in Sources */,
+				114224681A9DA00D00C48A2A /* AESKey.m in Sources */,
+				11E345361C5C8100000EF657 /* AuthMeSignDelegate.swift in Sources */,
+				1142246A1A9DA00D00C48A2A /* PKCS5PBBKDF2.m in Sources */,
+				1117EB1F1AA3974300A13D7B /* AuthMeConfiguration.swift in Sources */,
+				1142245F1A9D9FFC00C48A2A /* Log.swift in Sources */,
+				1117EB1A1AA3959500A13D7B /* AuthMe.xcdatamodeld in Sources */,
+				11D0B97E1AABB747003B1721 /* AuthMeServiceDelegate.swift in Sources */,
+				11E3453E1C5C8336000EF657 /* AppConfiguration.swift in Sources */,
+				11D0B9781AABA106003B1721 /* AuthMeServiceInitialiser.swift in Sources */,
+				1117EB1D1AA3974200A13D7B /* Configuration.swift in Sources */,
+				118403401C5DCF8900590B26 /* DeviceListController.swift in Sources */,
+				1117EB241AA3A43E00A13D7B /* AuthListController.swift in Sources */,
+				11E3453C1C5C825B000EF657 /* ConfigurationSplitViewController.swift in Sources */,
+				11D0B9871AAD0D2C003B1721 /* SvcSession.swift in Sources */,
+				11D0B97A1AABA88B003B1721 /* AuthMeServiceOperation.swift in Sources */,
+				1184033C1C5DCB6500590B26 /* DeviceInfo.swift in Sources */,
+				11E345351C5C8100000EF657 /* AuthMeSign.swift in Sources */,
+				11D0B97C1AABB603003B1721 /* AuthMeService.swift in Sources */,
+				1117EB211AA3977300A13D7B /* MasterPassword.swift in Sources */,
+				111C8C531A9AE85A009ADBE2 /* AuthMeAppDelegate.swift in Sources */,
+				1198B4041C78292B007001F5 /* KeyChainPassword.m in Sources */,
+				11E3453A1C5C825B000EF657 /* ConfigurationDetailMenuController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		111C8C601A9AE85A009ADBE2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11C3F3211A9DA2DD00F9102C /* CryptoTests.swift in Sources */,
+				111C8C6B1A9AE85A009ADBE2 /* AuthMeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		111C8C661A9AE85A009ADBE2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 111C8C4C1A9AE85A009ADBE2 /* AuthMe */;
+			targetProxy = 111C8C651A9AE85A009ADBE2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		111C8C5D1A9AE85A009ADBE2 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				111C8C5E1A9AE85A009ADBE2 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		111C8C6C1A9AE85A009ADBE2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = AuthMe/Src/ObjectiveCBridgingHeader.h;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		111C8C6D1A9AE85A009ADBE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = AuthMe/Src/ObjectiveCBridgingHeader.h;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		111C8C6F1A9AE85A009ADBE2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = AuthMe/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.authme.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		111C8C701A9AE85A009ADBE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = AuthMe/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.authme.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		111C8C721A9AE85A009ADBE2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = AuthMeTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.authme.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AuthMe.app/AuthMe";
+			};
+			name = Debug;
+		};
+		111C8C731A9AE85A009ADBE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = AuthMeTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.authme.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AuthMe.app/AuthMe";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		111C8C481A9AE85A009ADBE2 /* Build configuration list for PBXProject "AuthMe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				111C8C6C1A9AE85A009ADBE2 /* Debug */,
+				111C8C6D1A9AE85A009ADBE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		111C8C6E1A9AE85A009ADBE2 /* Build configuration list for PBXNativeTarget "AuthMe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				111C8C6F1A9AE85A009ADBE2 /* Debug */,
+				111C8C701A9AE85A009ADBE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		111C8C711A9AE85A009ADBE2 /* Build configuration list for PBXNativeTarget "AuthMeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				111C8C721A9AE85A009ADBE2 /* Debug */,
+				111C8C731A9AE85A009ADBE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		1117EB181AA3959500A13D7B /* AuthMe.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				1117EB191AA3959500A13D7B /* AuthMe.xcdatamodel */,
+			);
+			currentVersion = 1117EB191AA3959500A13D7B /* AuthMe.xcdatamodel */;
+			path = AuthMe.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 111C8C451A9AE85A009ADBE2 /* Project object */;
+}

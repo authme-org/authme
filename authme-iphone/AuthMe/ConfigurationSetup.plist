@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>ConfigurationItems</key>
+		<array>
+			<dict>
+				<key>DisplayNameShort</key>
+				<string>Login Details</string>
+				<key>SubMenu</key>
+				<array>
+					<dict>
+						<key>ConfigurationItems</key>
+						<array>
+							<dict>
+								<key>DBAttribute</key>
+								<string>serviceUsername</string>
+								<key>DBClass</key>
+								<string>String</string>
+								<key>DefaultValue</key>
+								<string>Email Address</string>
+								<key>DisplayNameShort</key>
+								<string>Email</string>
+							</dict>
+							<dict>
+								<key>DefaultValue</key>
+								<string>Service Password</string>
+								<key>DisplayNameShort</key>
+								<string>Password</string>
+								<key>SecureEntry</key>
+								<true/>
+								<key>Password</key>
+								<true/>
+							</dict>
+						</array>
+						<key>GroupName</key>
+						<string>Service Logon Details</string>
+						<key>GroupDescription</key>
+						<string>Enter your service email address and password here</string>
+					</dict>
+				</array>
+				<key>SubMenuAction</key>
+				<string>SaveToLocalStore</string>
+				<key>SubMenuTitle</key>
+				<string>AuthMe Password</string>
+			</dict>
+		</array>
+		<key>GroupName</key>
+		<string>Service Configuration</string>
+	</dict>
+	<dict>
+		<key>DebugOnly</key>
+		<true/>
+		<key>ConfigurationItems</key>
+		<array>
+			<dict>
+				<key>DisplayNameShort</key>
+				<string>Service URL</string>
+				<key>DebugOnly</key>
+				<true/>
+				<key>SubMenu</key>
+				<array>
+					<dict>
+						<key>ConfigurationItems</key>
+						<array>
+							<dict>
+								<key>DBAttribute</key>
+								<string>serviceURL</string>
+								<key>DBClass</key>
+								<string>String</string>
+								<key>DefaultValue</key>
+								<string>https://service.readercom.com/readercom-ws</string>
+								<key>DisplayNameShort</key>
+								<string>URL</string>
+							</dict>
+						</array>
+						<key>GroupName</key>
+						<string>AuthMe Service URL</string>
+						<key>GroupDescription</key>
+						<string>Enter URL for service you use.  Default is:  https://service.readercom.com/readercom-ws</string>
+					</dict>
+				</array>
+				<key>SubMenuAction</key>
+				<string>SaveToLocalStore</string>
+				<key>SubMenuTitle</key>
+				<string>PWitC Password</string>
+			</dict>
+		</array>
+		<key>GroupName</key>
+		<string>Debug Options</string>
+	</dict>
+</array>
+</plist>
