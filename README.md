@@ -1,4 +1,4 @@
-# AuthMe Documentation
+# AuthMe
 
 AuthMe is a set of programs and services revolving around users authorisating security actions 
 from their mobile device.  It comprises:
