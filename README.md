@@ -16,6 +16,7 @@ for *NIX, a command line client (for both Windows and *NIX) and a Windows GUI.
 
 The authorisation client can request the user authorise any action.  As a part of this request, the client 
 can provide something that has been previously encrypted and have it decrypted.  The base functionality 
-is used for authentication to the PAM module (there is also code for a Spring based J2EE app loging).  The 
+is used for authentication to the PAM module (there is also code for a Spring based J2EE app login).  The 
 decryption functionality means the client can encrypt files that can only be decrypted when authorised by 
-the mobile device.
+the mobile device.  This file encryption functionality is available in the command line clients and the
+Windows GUI.
