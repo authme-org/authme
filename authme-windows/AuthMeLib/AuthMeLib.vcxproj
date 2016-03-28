@@ -74,7 +74,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../../authme-unix/Pam/src;./;e:/prog/clib/curl/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../authme-unix/src;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -88,7 +88,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>HAVE_WINCAPI;HAVE_WINHTTP;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../../authme-unix/Pam/src;./</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../authme-unix/src;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -104,7 +104,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../../authme-unix/Pam/src;./;e:/prog/clib/curl/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../authme-unix/src;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,7 +122,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HAVE_WINCAPI;HAVE_WINHTTP;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../../authme-unix/Pam/src;./</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../authme-unix/src;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,13 +135,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\authme-unix\Pam\src\httpc.h" />
-    <ClInclude Include="..\..\..\authme-unix\Pam\src\httpc_curl.h" />
-    <ClInclude Include="..\..\..\authme-unix\Pam\src\json.h" />
-    <ClInclude Include="..\..\..\authme-unix\Pam\src\mpass.h" />
-    <ClInclude Include="..\..\..\authme-unix\Pam\src\mpass_openssl.h" />
-    <ClInclude Include="..\..\..\authme-unix\Pam\src\service.h" />
-    <ClInclude Include="..\..\..\authme-unix\Pam\src\utils.h" />
+    <ClInclude Include="..\..\authme-unix\src\httpc.h" />
+    <ClInclude Include="..\..\authme-unix\src\httpc_curl.h" />
+    <ClInclude Include="..\..\authme-unix\src\json.h" />
+    <ClInclude Include="..\..\authme-unix\src\mpass.h" />
+    <ClInclude Include="..\..\authme-unix\src\mpass_openssl.h" />
+    <ClInclude Include="..\..\authme-unix\src\service.h" />
+    <ClInclude Include="..\..\authme-unix\src\utils.h" />
     <ClInclude Include="AuthMeWindows.h" />
     <ClInclude Include="helpers.h" />
     <ClInclude Include="httpc_windows.h" />
@@ -151,14 +151,14 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\authme-unix\Pam\src\cnffile.c" />
-    <ClCompile Include="..\..\..\authme-unix\Pam\src\httpc.c" />
-    <ClCompile Include="..\..\..\authme-unix\Pam\src\httpc_curl.c" />
-    <ClCompile Include="..\..\..\authme-unix\Pam\src\json.c" />
-    <ClCompile Include="..\..\..\authme-unix\Pam\src\mpass.c" />
-    <ClCompile Include="..\..\..\authme-unix\Pam\src\mpass_openssl.c" />
-    <ClCompile Include="..\..\..\authme-unix\Pam\src\service.c" />
-    <ClCompile Include="..\..\..\authme-unix\Pam\src\utils.c" />
+    <ClCompile Include="..\..\authme-unix\src\cnffile.c" />
+    <ClCompile Include="..\..\authme-unix\src\httpc.c" />
+    <ClCompile Include="..\..\authme-unix\src\httpc_curl.c" />
+    <ClCompile Include="..\..\authme-unix\src\json.c" />
+    <ClCompile Include="..\..\authme-unix\src\mpass.c" />
+    <ClCompile Include="..\..\authme-unix\src\mpass_openssl.c" />
+    <ClCompile Include="..\..\authme-unix\src\service.c" />
+    <ClCompile Include="..\..\authme-unix\src\utils.c" />
     <ClCompile Include="AuthMeWindows.cpp" />
     <ClCompile Include="helpers.cpp" />
     <ClCompile Include="httpc_windows.c" />

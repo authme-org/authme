@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>../../../authme-unix/Pam/src;./</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../authme-unix/src;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Advapi32.lib;Ole32.lib; Shlwapi.lib;Secur32.lib</AdditionalDependencies>
@@ -102,7 +102,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>../../../authme-unix/Pam/src;./</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../authme-unix/src;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Advapi32.lib;Ole32.lib; Shlwapi.lib;Secur32.lib</AdditionalDependencies>
@@ -114,7 +114,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>../../../authme-unix/Pam/src;./</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../authme-unix/src;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Advapi32.lib;Ole32.lib; Shlwapi.lib;Secur32.lib</AdditionalDependencies>
@@ -125,7 +125,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>../../../authme-unix/Pam/src;./</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../authme-unix/src;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Advapi32.lib;Ole32.lib; Shlwapi.lib;Secur32.lib</AdditionalDependencies>
