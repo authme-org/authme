@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">AuthMe</string>
+    <string name="title_activity_authme_main">AuthMe</string>
+    <string name="title_activity_configuration">Configuration</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_section1">Auth Requests</string>
+    <string name="title_section2">Account Devices</string>
+    <string name="title_section3">Settings</string>
+    <string name="auths_container_tag">auths_container</string>
+    <string name="devices_container_tag">devices_container</string>
+</resources>

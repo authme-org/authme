@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Service settings -->
+    <string name="pref_header_service">AuthMe Service</string>
+
+    <string name="pref_title_username">Email Address</string>
+    <string name="pref_description_username">Email address used to log into AuthMe</string>
+
+    <string name="pref_title_name">Name</string>
+    <string name="pref_description_name">Your name</string>
+
+    <string name="pref_title_password">Password</string>
+    <string name="pref_description_password">Password to log into AuthMe</string>
+
+    <string name="pref_title_password_repeat">Password (repeat)</string>
+    <string name="pref_description_password_repeat">Re-enter password here</string>
+
+
+    <!-- Debug settings -->
+    <string name="pref_title_service_url">URL</string>
+    <string name="pref_summary_service_url">Base URL to use to connect to service</string>
+    <string name="pref_default_service_url">http://pluto.wingsofhermes.org:8080/AuthMeWS/UserWS/</string>
+</resources>
