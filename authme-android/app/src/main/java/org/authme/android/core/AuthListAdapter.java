@@ -128,7 +128,7 @@ public class AuthListAdapter extends ArrayAdapter<SvcSession>
                 ttr.setText(serverDate);
             if (bt != null)
                 if (!"".equals(ss.getWrappedSecret()) && ss.getWrappedSecret() != null) {
-                    bt.setText("Server String: " + ss.getServerString() + " have secret");
+                    bt.setText("Server String: " + ss.getServerString() + " (*)");
                 }
                 else {
                     bt.setText("Server String: " + ss.getServerString());
