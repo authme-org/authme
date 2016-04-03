@@ -292,6 +292,7 @@ public class MasterPassword {
         /* Build our alert dialog */
         AlertDialog.Builder alert = new AlertDialog.Builder(mainTabContext);
         alert.setTitle("Master Password");
+        alert.setCancelable(false);
         alert.setMessage(msg);
 
         input = new EditText(mainTabContext);
