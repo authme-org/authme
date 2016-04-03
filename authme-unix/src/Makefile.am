@@ -47,7 +47,7 @@ pam_authme_la_LDFLAGS= -avoid-version -module -lcrypt -lcurl
 
 noinst_PROGRAMS = authme
 authme_SOURCES = $(authme_c_sources)
-authme_LDADD = libauthme.la
+authme_LDADD = libauthme.la -lcurl
 authme_LDFLAGS= -lcrypt -lcurl
 
 install-exec-hook:
