@@ -11,8 +11,9 @@
       <ComponentGroupRef Id="StartMenuComponents" />
 		</Feature>
   
-    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER"/>
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <UIRef Id="WixUI_InstallDir"/>
+    <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
 	</Product>
 
 	<Fragment>
