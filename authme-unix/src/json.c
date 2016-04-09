@@ -77,6 +77,9 @@ json_to_string_value(json_t * json, char * str, size_t *sz);
 char *
 json_to_string_array(json_t * json, char * str, size_t * sz);
 
+char *
+json_escape_string(char * str);
+
 
 /* ---------------------------------------------------------------- *
  * Create a new json_t object
@@ -114,7 +117,7 @@ json_new_string(char * val, char * key)
     /* Set values */
     ret->type = JSTRING;
     ret->js_object_name = strdup(key);
-    ret->js_str_value = strdup(val);
+	ret->js_str_value = json_escape_string(val);
 
     return ret;
 }
@@ -615,5 +618,74 @@ json_to_string(json_t * json)
     ret[0] = '\0';
 
     return json_to_string_object(json, ret, &sz);
+
+}
+
+char *
+json_escape_string(char * str)
+{
+	size_t i, sz;
+	char * ret;
+
+	/* Boundary conditions */
+	if (str == NULL)
+		return NULL;
+
+	/* This is probably wasteful - but we calculate the final result size up front */
+	i = 0;
+	sz = 0;
+	while (str[i] != '\0')
+	{
+		switch (str[i])
+		{
+		case '"':
+		case '\\':
+		case '\b':
+		case '\f':
+		case '\n':
+		case '\r':
+		case '\t':
+			// This is an escape character so we escape it
+			++sz;
+			break;
+		default:
+			break;
+		}
+
+		++sz;
+		++i;
+
+	}
+
+	if (sz == i)
+		return strdup(str);
+
+	/* We have something to escape */
+	ret = (char *)malloc(sz + 1);
+	i = 0;
+	sz = 0;
+
+	while (str[i] != '\0')
+	{
+		switch (str[i])
+		{
+		case '"' : ret[sz++] = '\\'; ret[sz++] = '"'; break;
+		case '\\': ret[sz++] = '\\'; ret[sz++] = '\\'; break;
+		case '\b': ret[sz++] = '\\'; ret[sz++] = 'b'; break;
+		case '\f': ret[sz++] = '\\'; ret[sz++] = 'f'; break;
+		case '\n': ret[sz++] = '\\'; ret[sz++] = 'n'; break;
+		case '\r': ret[sz++] = '\\'; ret[sz++] = 'r'; break;
+		case '\t': ret[sz++] = '\\'; ret[sz++] = 't'; break;
+			break;
+		default: ret[sz++] = str[i];
+		}
+
+		++i;
+
+	}
+	ret[sz] = '\0';
+
+	return ret;
+
 
 }
