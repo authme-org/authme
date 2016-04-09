@@ -103,6 +103,10 @@ extern "C" {
 	authme_service_config_t * authme_service_config_create(void);
 	void authme_service_config_free(authme_service_config_t * psc);
 
+	// IF a default service URL is defined - return it, otherwise return NULL;
+	// NOTE: It is returned as a malloced item - it must be freed by caller!
+	char * get_default_service_url();
+
 	authme_err_t authme_get_svc_info(authme_service_config_t * psc);
 	int authme_start_svc_check(authme_service_config_t * psc);
 	authme_err_t authme_get_svc_check_status(authme_service_config_t * psc);

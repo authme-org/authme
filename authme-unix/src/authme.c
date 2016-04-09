@@ -53,6 +53,8 @@
 void printUsage(char * progName)
 {
 
+	char * default_url = get_default_service_url();
+
 	fprintf(stderr, "Usage: %s ping|check|status|addsecret|encrypt|decrypt|keygen|version", progName);
 #if defined WIN32
 	fprintf(stderr, "|lsa-init");
@@ -69,6 +71,11 @@ void printUsage(char * progName)
 #endif
     fprintf(stderr, "    --service-url/-r\n");
     fprintf(stderr, "         Base URL of the Authme service\n");
+	if (default_url != NULL)
+	{
+		fprintf(stderr, "         Defaults to: %s\n", default_url);
+		free(default_url);
+	}
     fprintf(stderr, "    --userid/-u\n");
     fprintf(stderr, "         User ID of user to check\n");
     fprintf(stderr, "    --serverid/-s\n");

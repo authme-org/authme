@@ -1058,7 +1058,11 @@ authme_service_config_create(void)
 
 	memset(psc, 0, sizeof(authme_service_config_t));
 
+#if defined AUTHME_SERVICE_URL
+	psc->psc_url = strdup(AUTHME_SERVICE_URL);
+#else
     psc->psc_url = NULL;
+#endif
     psc->psc_check_url = NULL;
     psc->psc_check_id = NULL;
     psc->psc_user_id = NULL;
@@ -1123,6 +1127,17 @@ void authme_service_config_free(authme_service_config_t * psc)
 
     /* Now the structure itself */
     free(psc);
+
+}
+
+char * get_default_service_url()
+{
+
+#if defined AUTHME_SERVICE_URL
+	return strdup(AUTHME_SERVICE_URL);
+#else
+	return NULL;
+#endif
 
 }
 
