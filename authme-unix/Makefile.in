@@ -311,6 +311,7 @@ infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+libsecuritydir = @libsecuritydir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@

@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: pauthme
-Description: PAM AuthMe Module
+Name: authme
+Description: AuthMe PAM module and command line
 Version: @VERSION@
 Libs: -L${libdir} -l@LIBRARY_NAME@
 Cflags: -I${includedir}/@LIBRARY_NAME@

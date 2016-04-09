@@ -94,7 +94,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = authme$(EXEEXT)
+bin_PROGRAMS = authme$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/config.h.in $(top_srcdir)/mkinstalldirs \
@@ -134,8 +134,8 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(securityexecdir)"
-LTLIBRARIES = $(noinst_LTLIBRARIES) $(securityexec_LTLIBRARIES)
+am__installdirs = "$(DESTDIR)$(libsecuritydir)" "$(DESTDIR)$(bindir)"
+LTLIBRARIES = $(libsecurity_LTLIBRARIES) $(noinst_LTLIBRARIES)
 libauthme_la_LIBADD =
 am__objects_1 = utils.lo service.lo json.lo mpass.lo mpass_openssl.lo \
 	httpc.lo httpc_curl.lo cnffile.lo
@@ -153,7 +153,7 @@ pam_authme_la_OBJECTS = $(am_pam_authme_la_OBJECTS)
 pam_authme_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(pam_authme_la_LDFLAGS) $(LDFLAGS) -o $@
-PROGRAMS = $(noinst_PROGRAMS)
+PROGRAMS = $(bin_PROGRAMS)
 am__objects_4 = authme.$(OBJEXT)
 am_authme_OBJECTS = $(am__objects_4)
 authme_OBJECTS = $(am_authme_OBJECTS)
@@ -331,6 +331,7 @@ infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+libsecuritydir = @libsecuritydir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
@@ -362,8 +363,9 @@ libauthme_la_SOURCES = $(library_c_sources) $(library_h_sources)
 # Now the PAM module
 library_includedir = $(includedir)/$(LIBRARY_NAME)-$(API_VERSION)/$(LIBRARY_NAME)#library_include_HEADERS = $(h_sources)
 AM_CPPFLAGS = -I$(top_srcdir)
-securityexecdir = $(DESTDIR)$(libdir)/security
-securityexec_LTLIBRARIES = pam_authme.la
+
+# securityexecdir = $(DESTDIR)$(libdir)/security
+libsecurity_LTLIBRARIES = pam_authme.la
 pam_authme_la_LIBADD = libauthme.la
 pam_authme_la_SOURCES = $(h_sources) $(c_sources)
 pam_authme_la_LDFLAGS = -avoid-version -module -lcrypt -lcurl
@@ -421,9 +423,33 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 distclean-hdr:
 	-rm -f config.h stamp-h1
 
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; \
+install-libsecurityLTLIBRARIES: $(libsecurity_LTLIBRARIES)
+	@$(NORMAL_INSTALL)
+	@list='$(libsecurity_LTLIBRARIES)'; test -n "$(libsecuritydir)" || list=; \
+	list2=; for p in $$list; do \
+	  if test -f $$p; then \
+	    list2="$$list2 $$p"; \
+	  else :; fi; \
+	done; \
+	test -z "$$list2" || { \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libsecuritydir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libsecuritydir)" || exit 1; \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libsecuritydir)'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libsecuritydir)"; \
+	}
+
+uninstall-libsecurityLTLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@list='$(libsecurity_LTLIBRARIES)'; test -n "$(libsecuritydir)" || list=; \
+	for p in $$list; do \
+	  $(am__strip_dir) \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(libsecuritydir)/$$f'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(libsecuritydir)/$$f"; \
+	done
+
+clean-libsecurityLTLIBRARIES:
+	-test -z "$(libsecurity_LTLIBRARIES)" || rm -f $(libsecurity_LTLIBRARIES)
+	@list='$(libsecurity_LTLIBRARIES)'; \
 	locs=`for p in $$list; do echo $$p; done | \
 	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
 	      sort -u`; \
@@ -432,33 +458,9 @@ clean-noinstLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-install-securityexecLTLIBRARIES: $(securityexec_LTLIBRARIES)
-	@$(NORMAL_INSTALL)
-	@list='$(securityexec_LTLIBRARIES)'; test -n "$(securityexecdir)" || list=; \
-	list2=; for p in $$list; do \
-	  if test -f $$p; then \
-	    list2="$$list2 $$p"; \
-	  else :; fi; \
-	done; \
-	test -z "$$list2" || { \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(securityexecdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(securityexecdir)" || exit 1; \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(securityexecdir)'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(securityexecdir)"; \
-	}
-
-uninstall-securityexecLTLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@list='$(securityexec_LTLIBRARIES)'; test -n "$(securityexecdir)" || list=; \
-	for p in $$list; do \
-	  $(am__strip_dir) \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(securityexecdir)/$$f'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(securityexecdir)/$$f"; \
-	done
-
-clean-securityexecLTLIBRARIES:
-	-test -z "$(securityexec_LTLIBRARIES)" || rm -f $(securityexec_LTLIBRARIES)
-	@list='$(securityexec_LTLIBRARIES)'; \
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; \
 	locs=`for p in $$list; do echo $$p; done | \
 	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
 	      sort -u`; \
@@ -471,10 +473,50 @@ libauthme.la: $(libauthme_la_OBJECTS) $(libauthme_la_DEPENDENCIES) $(EXTRA_libau
 	$(AM_V_CCLD)$(LINK)  $(libauthme_la_OBJECTS) $(libauthme_la_LIBADD) $(LIBS)
 
 pam_authme.la: $(pam_authme_la_OBJECTS) $(pam_authme_la_DEPENDENCIES) $(EXTRA_pam_authme_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(pam_authme_la_LINK) -rpath $(securityexecdir) $(pam_authme_la_OBJECTS) $(pam_authme_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(pam_authme_la_LINK) -rpath $(libsecuritydir) $(pam_authme_la_OBJECTS) $(pam_authme_la_LIBADD) $(LIBS)
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
+	fi; \
+	for p in $$list; do echo "$$p $$p"; done | \
+	sed 's/$(EXEEXT)$$//' | \
+	while read p p1; do if test -f $$p \
+	 || test -f $$p1 \
+	  ; then echo "$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n;h' \
+	    -e 's|.*|.|' \
+	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
+	sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
+	    else { print "f", $$3 "/" $$4, $$1; } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	    test -z "$$files" || { \
+	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	    } \
+	; done
 
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
+	      -e 's/$$/$(EXEEXT)/' \
+	`; \
+	test -n "$$list" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(bindir)" && rm -f $$files
+
+clean-binPROGRAMS:
+	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
 	echo " rm -f" $$list; \
 	rm -f $$list || exit $$?; \
 	test -n "$(EXEEXT)" || exit 0; \
@@ -617,7 +659,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) config.h
 installdirs:
-	for dir in "$(DESTDIR)$(securityexecdir)"; do \
+	for dir in "$(DESTDIR)$(libsecuritydir)" "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -652,9 +694,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	clean-noinstPROGRAMS clean-securityexecLTLIBRARIES \
-	mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libsecurityLTLIBRARIES \
+	clean-libtool clean-noinstLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -674,13 +715,13 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-libsecurityLTLIBRARIES
 
 install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-securityexecLTLIBRARIES
+install-exec-am: install-binPROGRAMS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-html: install-html-am
@@ -721,31 +762,31 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-securityexecLTLIBRARIES
+uninstall-am: uninstall-binPROGRAMS uninstall-libsecurityLTLIBRARIES
 
 .MAKE: all install-am install-exec-am install-strip
 
-.PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLTLIBRARIES clean-noinstPROGRAMS \
-	clean-securityexecLTLIBRARIES cscopelist-am ctags ctags-am \
-	distclean distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-exec-hook install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am \
-	install-securityexecLTLIBRARIES install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+.PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
+	clean-binPROGRAMS clean-generic clean-libsecurityLTLIBRARIES \
+	clean-libtool clean-noinstLTLIBRARIES cscopelist-am ctags \
+	ctags-am distclean distclean-compile distclean-generic \
+	distclean-hdr distclean-libtool distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-exec-hook \
+	install-html install-html-am install-info install-info-am \
+	install-libsecurityLTLIBRARIES install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am \
-	uninstall-securityexecLTLIBRARIES
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-libsecurityLTLIBRARIES
 
 
 install-exec-hook:
-	rm -f $(securityexecdir)/$(LIBRARY_NAME).la
-	rm -f $(securityexecdir)/$(LIBRARY_NAME).a
+	rm -f $(libsecuritydir)/$(LIBRARY_NAME).la
+	rm -f $(libsecuritydir)/$(LIBRARY_NAME).a
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -61,7 +61,7 @@ dnl --------------------------------
 dnl Initialization macros.
 dnl --------------------------------
 
-AC_INIT(pam_authme, 0.1.0)
+AC_INIT(authme, 0.1.0)
 AC_CONFIG_SRCDIR([src/pauthme.h])
 AM_CONFIG_HEADER(src/config.h)
 
@@ -84,6 +84,11 @@ AC_ARG_WITH(service,
         [Define the service URL @<:@default=https://www.authme.org/AuthMeWS/Svc@:>@])],
     [],
     [with_service=https://www.authme.org/AuthMeWS/Svc])
+
+AC_ARG_WITH([libsecuritydir],
+    [AC_HELP_STRING(--with-libsecuritydir,
+        [Define directory in which to install the PAM module])],
+    [], [with_libsecuritydir='$(libdir)/security'])
 
 dnl -----------------------------------------------
 dnl Checks for programs.
@@ -198,13 +203,15 @@ AC_TRY_LINK([#include <openssl/evp.h>],
   fi
 
 dnl -----------------------------------------------
-dnl Configure the default service directory
+dnl Configure final variable outputs
 dnl -----------------------------------------------
 
 AS_IF([test "x$with_service" != xno],
     [AC_DEFINE_UNQUOTED([AUTHME_SERVICE_URL], ["$with_service"],
                [Define default service URL (if any)])],
     [])
+
+AC_SUBST([libsecuritydir], [$with_libsecuritydir])
 
 dnl -----------------------------------------------
 dnl Generates Makefile's, configuration files and scripts

@@ -35,9 +35,9 @@ library_includedir=$(includedir)/$(LIBRARY_NAME)-$(API_VERSION)/$(LIBRARY_NAME)#
 
 AM_CPPFLAGS = -I$(top_srcdir)
 
-securityexecdir = $(DESTDIR)$(libdir)/security
+# securityexecdir = $(DESTDIR)$(libdir)/security
 
-securityexec_LTLIBRARIES= pam_authme.la
+libsecurity_LTLIBRARIES= pam_authme.la
 pam_authme_la_LIBADD= libauthme.la
 pam_authme_la_SOURCES= $(h_sources) $(c_sources)
 pam_authme_la_LDFLAGS= -avoid-version -module -lcrypt -lcurl
@@ -45,11 +45,11 @@ pam_authme_la_LDFLAGS= -avoid-version -module -lcrypt -lcurl
 # Finally the tool.  NOTE: This is not installed at this time as it is
 # primarily for testing
 
-noinst_PROGRAMS = authme
+bin_PROGRAMS = authme
 authme_SOURCES = $(authme_c_sources)
 authme_LDADD = libauthme.la -lcurl
 authme_LDFLAGS= -lcrypt -lcurl
 
 install-exec-hook:
-	rm -f $(securityexecdir)/$(LIBRARY_NAME).la
-	rm -f $(securityexecdir)/$(LIBRARY_NAME).a
+	rm -f $(libsecuritydir)/$(LIBRARY_NAME).la
+	rm -f $(libsecuritydir)/$(LIBRARY_NAME).a
