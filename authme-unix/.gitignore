@@ -4,3 +4,4 @@ authme
 config.h
 stamp-h1
 /autom4te.cache/
+*.gz
