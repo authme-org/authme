@@ -79,6 +79,12 @@ AC_ARG_WITH(openldap,
 LDFLAGS="${LDFLAGS} -L${withval}/lib"
 CPPFLAGS="${CPPFLAGS} -I${withval}/include")
 
+AC_ARG_WITH(service,
+    [AC_HELP_STRING([--with-service],
+        [Define the service URL @<:@default=https://www.authme.org/AuthMeWS/Svc@:>@])],
+    [],
+    [with_service=https://www.authme.org/AuthMeWS/Svc])
+
 dnl -----------------------------------------------
 dnl Checks for programs.
 dnl -----------------------------------------------
@@ -89,7 +95,7 @@ AC_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 AM_SANITY_CHECK
 
-AC_LANG_CPLUSPLUS
+AC_LANG_C
 
 dnl -----------------------------------------------
 dnl Required include files and libraries
@@ -190,6 +196,15 @@ AC_TRY_LINK([#include <openssl/evp.h>],
           [AC_MSG_ERROR(["Unable to find libcrypto"])])
 
   fi
+
+dnl -----------------------------------------------
+dnl Configure the default service directory
+dnl -----------------------------------------------
+
+AS_IF([test "x$with_service" != xno],
+    [AC_DEFINE_UNQUOTED([AUTHME_SERVICE_URL], ["$with_service"],
+               [Define default service URL (if any)])],
+    [])
 
 dnl -----------------------------------------------
 dnl Generates Makefile's, configuration files and scripts

@@ -1,5 +1,8 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define default service URL (if any) */
+#undef AUTHME_SERVICE_URL
+
 /* Curl found on system */
 #undef HAVE_CURL
 
