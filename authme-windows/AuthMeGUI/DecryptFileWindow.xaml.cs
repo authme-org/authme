@@ -121,6 +121,8 @@ namespace AuthMeGUI
             }
 
             /* Do the actual decrypt */
+            authMe.setServerString("Filename: " + inputFileTextBox.Text);
+            authMe.setServerId("GUI File Decrypt");
             int res = authMe.doDecryptFile(inputFileTextBox.Text, outputFileTextBox.Text);
             if (res != AuthMe.AUTHME_ERRC_OK)
             {

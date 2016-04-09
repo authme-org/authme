@@ -84,6 +84,12 @@ namespace AuthMeDLL {
 		/* Loaded public key */
 		System::String ^getPublicKeyId(void);
 
+		/* Server String*/
+		void setServerId(System::String ^server_id);
+
+		/* Message to auth client */
+		void setServerString(System::String ^server_string);
+
 		/* Key file handling */
 		void setKeyFileName(System::String ^fileName);
 		System::String ^getKeyFileName(void);

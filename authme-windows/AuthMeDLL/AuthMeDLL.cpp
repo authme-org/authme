@@ -205,6 +205,25 @@ namespace AuthMeDLL {
 		return this->user_id;
 	}
 
+	/* Server String*/
+	void AuthMe::setServerId(System::String ^server_id)
+	{
+		if (psc->psc_server_id != NULL)
+			free(psc->psc_server_id);
+
+		psc->psc_server_id = refToChar(server_id);
+	}
+
+	/* Message to auth client */
+	void AuthMe::setServerString(System::String ^server_string)
+	{
+		if (psc->psc_server_string != NULL)
+			free(psc->psc_server_string);
+
+		psc->psc_server_string = refToChar(server_string);
+	}
+
+
 /*---------------------------------------------------------------
  * Key file
  * ---------------------------------------------------------------*/
