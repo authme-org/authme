@@ -994,7 +994,7 @@ mpass_openssl_init_w32_lsa_key(authme_master_password_t ** out)
 	WCHAR * pwcBuffer;
 
 	pwcBuffer = (WCHAR *)malloc(sizeof(WCHAR) * (bptr->length + 1));
-	swprintf(pwcBuffer, bptr->length + 1, L"%.*hs", (int)bptr->length, bptr->data);
+	swprintf(pwcBuffer, bptr->length + 1, L"%.*hs", (int)bptr->length, bptr->data); /* flawfinder: ignore */
 
 	if (LsaInitUnicodeString(&lucSecret, pwcBuffer) != S_OK)
 	{

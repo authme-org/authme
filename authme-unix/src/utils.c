@@ -184,18 +184,20 @@ void append_bfr(bfr_t * bfr, const char * str)
 	bs = strlen(bfr->b);
 	as = strlen(str);
 
-	if (bs + as >= bfr->s) {
+	if (bs + as + 1 >= bfr->s) {
 		do {
-			bfr->s = bfr->s * 2;
-		} while (bs + as > bfr->s);
+            /* 1024 byte chunks */
+			bfr->s = bfr->s + 1024;
+		} while (bs + as + 1 > bfr->s);
 
 		ret = (char *)malloc(bfr->s);
-		strcpy(ret, bfr->b);
+        memcpy(ret, bfr->b, bs);
+        ret[bs] = '\0';
 		free(bfr->b);
 		bfr->b = ret;
 	}
 
-	strcat(bfr->b, str);
+	strncat(bfr->b, str, bfr->s - 1);
 
 }
 

@@ -213,7 +213,8 @@ int
 do_add_secret(authme_service_config_t * psc)
 {
 	authme_err_t res;
-	char inbuf[2048];
+    /* We use a fixed size buffer and then restrict input to it */
+	char inbuf[2048]; /* flawfinder: ignore */
 	size_t inbuf_len;
 
 	/* Check for necessary info */
@@ -585,7 +586,8 @@ main (int argc, char **argv)
                 return 0;
             }
 
-            FILE * in = fopen(argv[p], "rt");
+            /* Running as user privileges so ignore flawfinder warning here */
+            FILE * in = fopen(argv[p], "rt"); /* flawfinder: ignore */
             if (in == NULL)
             {
                 fprintf(stderr, "Unable to open: %s\n", argv[p]);

@@ -37,7 +37,7 @@
 #ifndef WIN32
 #	include <syslog.h>
 #define strnicmp strncasecmp
-#define _snprintf snprintf
+#define _snprintf snprintf /* flawfinder: ignore */
 #endif
 
 #define _JSON_CHECK_INDEX(I,M,R) if (I>= M) return R
@@ -481,20 +481,23 @@ json_append_str(char *b, char * a, size_t * sz) {
     bs = strlen(b);
     as = strlen(a);
 
-    if (bs + as >= *sz) {
+    if (bs + as + 1 > *sz) {
         do {
-            *sz = *sz * 2;
+            // Allocate in 1024 byte blocks
+            *sz = *sz + 1024;
         }
-        while (bs + as > *sz);
+        while (bs + as + 1 > *sz);
 
         ret = (char *) malloc (*sz);
-        strcpy(ret, b);
+        memcpy(ret, b, bs);
+        // terminate the string
+        ret[bs] = '\0';
         free (b);
     }
     else
         ret = b;
 
-    return strcat(ret, a);
+    return strncat(ret, a, bs + as);
 
 }
 

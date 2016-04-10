@@ -81,10 +81,10 @@ authme_get_svc_check_status(authme_service_config_t * psc)
 
     if (psc->psc_check_url == NULL) {
         size_t blen = strlen(psc->psc_check_id) +
-            strlen(psc->psc_url) + strlen("/Check?checkId=");
+            strlen(psc->psc_url) + strlen("/Check?checkId=") + 1;
 
-        psc->psc_check_url = (char *) malloc (blen + 1);
-        sprintf(psc->psc_check_url, "%s/Check?checkId=%s",
+        psc->psc_check_url = (char *) malloc (blen);
+        snprintf(psc->psc_check_url, blen, "%s/Check?checkId=%s",
                 psc->psc_url,
                 psc->psc_check_id);
     }

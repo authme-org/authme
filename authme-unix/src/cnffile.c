@@ -226,7 +226,6 @@ authme_load_user_cnf(authme_service_config_t *psc, char * username)
 	char * n = username;
 	bfr_t * b;
 
-#if defined WIN32
 	char * base_dir;
 
 	base_dir = get_user_dir();
@@ -235,31 +234,10 @@ authme_load_user_cnf(authme_service_config_t *psc, char * username)
 
 	b = new_bfr();
 	append_bfr(b, base_dir);
+#if defined WIN32
 	append_bfr(b, "\\.authme");
-
 #else
-
-    if (username == NULL)
-    {
-        /* Can we find a username from the system? */
-        if ((n = getlogin()) == NULL)
-            return AUTHME_ERR_USER_UNKNOWN;
-    }
-        
-    /* First find the user's configuration */
-    struct passwd * pwd = getpwnam(n);
-
-    /* Does this user exist? */
-    if (pwd == NULL || pwd->pw_dir == NULL) {
-        psc->psc_last_error = strdup("Invalid user ID");
-        return AUTHME_ERR_USER_UNKNOWN;
-    }
-
-    /* Does the .authme file exist for this user? */
-    b = new_bfr();
-    append_bfr(b, pwd->pw_dir);
     append_bfr(b, "/.authme");
-
 #endif
 
     FILE *in = fopen(b->b, "rt");
@@ -397,7 +375,6 @@ authme_save_user_cnf(authme_service_config_t * psc, int flags, char * username)
 	char * n = username;
 	bfr_t * b;
 
-#if defined WIN32
 	char * base_dir;
 
 	base_dir = get_user_dir();
@@ -406,31 +383,10 @@ authme_save_user_cnf(authme_service_config_t * psc, int flags, char * username)
 
 	b = new_bfr();
 	append_bfr(b, base_dir);
+#if defined WIN32
 	append_bfr(b, "\\.authme");
-
 #else
-
-	if (username == NULL)
-	{
-		/* Can we find a username from the system? */
-		if ((n = getlogin()) == NULL)
-			return AUTHME_ERR_USER_UNKNOWN;
-	}
-
-	/* First find the user's configuration */
-	struct passwd * pwd = getpwnam(n);
-
-	/* Does this user exist? */
-	if (pwd == NULL || pwd->pw_dir == NULL) {
-		psc->psc_last_error = strdup("Invalid user ID");
-		return AUTHME_ERR_USER_UNKNOWN;
-	}
-
-	/* Does the .authme file exist for this user? */
-	b = new_bfr();
-	append_bfr(b, pwd->pw_dir);
 	append_bfr(b, "/.authme");
-
 #endif
 
 	FILE *out = fopen(b->b, "wt");
