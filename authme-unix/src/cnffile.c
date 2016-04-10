@@ -79,7 +79,7 @@ get_user_dir()
 #else
 
 char *
-get_user_dir()
+get_user_dir(char * username)
 {
 
     /* A bit complicated but thread safe */
@@ -98,7 +98,11 @@ get_user_dir()
         return NULL;
 
     /* Find out current user details */
-    res = getpwuid_r(getuid(), &pw, bfr, bfr_len, &pw_res);
+    if (username == NULL)
+        res = getpwuid_r(getuid(), &pw, bfr, bfr_len, &pw_res);
+    else
+        res = getpwnam_r(username, &pw, bfr, bfr_len, &pw_res);
+    
     while (res == ERANGE)
     {
         free(bfr);
@@ -106,7 +110,10 @@ get_user_dir()
         if ((bfr = (char *) malloc (bfr_len)) == NULL)
             return NULL;
 
-        res = getpwuid_r(getuid(), &pw, bfr, bfr_len, &pw_res);
+        if (username == NULL)
+            res = getpwuid_r(getuid(), &pw, bfr, bfr_len, &pw_res);
+        else
+            res = getpwnam_r(username, &pw, bfr, bfr_len, &pw_res);
     }
 
     if (res == 0 && pw_res != NULL)
@@ -124,7 +131,7 @@ get_user_dir()
 char * get_default_key_file_name()
 {
 	char * ret = NULL;
-	char * base = get_user_dir();
+	char * base = get_user_dir(NULL);
 
 	bfr_t * b = new_bfr();
 
@@ -228,7 +235,7 @@ authme_load_user_cnf(authme_service_config_t *psc, char * username)
 
 	char * base_dir;
 
-	base_dir = get_user_dir();
+	base_dir = get_user_dir(username);
 	if (base_dir == NULL)
 		return AUTHME_ERR_USER_UNKNOWN;
 
@@ -377,7 +384,7 @@ authme_save_user_cnf(authme_service_config_t * psc, int flags, char * username)
 
 	char * base_dir;
 
-	base_dir = get_user_dir();
+	base_dir = get_user_dir(NULL);
 	if (base_dir == NULL)
 		return AUTHME_ERR_FILE_OPEN;
 

@@ -387,7 +387,7 @@ pam_sm_authenticate(pam_handle_t * pamh, int flags, int argc,
     char * username;           /* Returned by the PAM library */
 
     /* This is the main function called by the library for a user
-     * loggin in.  For now it is an empty stub
+     * logging in.
      */
 
     /* Check for a pre-existing config */
@@ -453,12 +453,14 @@ pam_sm_authenticate(pam_handle_t * pamh, int flags, int argc,
     }
 
     /* Execute */
+    authme_service_init();
     authme_err_t perr = authme_start_svc_check(pc->pc_psc);
     if (perr == AUTHME_ERR_USER_UNKNOWN) 
     {
         authme_do_log(pc->pc_do_debug, LOG_WARNING,
-                     "(%s) service did not recognise user ID %s"
+                      "(%s) service did not recognise user ID %s",
                      AUTHME_MODULE_NAME, pc->pc_psc->psc_user_id);
+        authme_service_shutdown();
         return PAM_USER_UNKNOWN;
     }
     if (perr != AUTHME_ERR_OK)
@@ -466,6 +468,7 @@ pam_sm_authenticate(pam_handle_t * pamh, int flags, int argc,
         authme_do_log(pc->pc_do_debug, LOG_WARNING,
                      "(%s) service returned error: %s"
                      AUTHME_MODULE_NAME, pc->pc_psc->psc_last_error);
+        authme_service_shutdown();
         return PAM_SERVICE_ERR;
     }
 
@@ -491,6 +494,7 @@ pam_sm_authenticate(pam_handle_t * pamh, int flags, int argc,
                 authme_do_log(pc->pc_do_debug, LOG_INFO,
                              "(%s) user %s approved by service",
                              AUTHME_MODULE_NAME, pc->pc_psc->psc_user_id);
+                authme_service_shutdown();
                 return PAM_SUCCESS;
             }
             if (pc->pc_psc->psc_check_status == AUTHME_STATUS_DECLINED) {
@@ -498,6 +502,7 @@ pam_sm_authenticate(pam_handle_t * pamh, int flags, int argc,
                              "(%s) user %s (%s) denied by service",
                              AUTHME_MODULE_NAME, pc->pc_userid,
                              pc->pc_psc->psc_user_id);
+                authme_service_shutdown();
                 return PAM_AUTH_ERR;
             }
         }
@@ -505,6 +510,7 @@ pam_sm_authenticate(pam_handle_t * pamh, int flags, int argc,
             authme_do_log(pc->pc_do_debug, LOG_WARNING,
                          "(%s) service error: %s",
                          AUTHME_MODULE_NAME, pc->pc_psc->psc_last_error);
+            authme_service_shutdown();
             return PAM_SERVICE_ERR;
         }
     }
@@ -513,7 +519,8 @@ pam_sm_authenticate(pam_handle_t * pamh, int flags, int argc,
     authme_do_log(pc->pc_do_debug, LOG_WARNING,
                  "(%s) service timed out for user %s (%s)",
                  AUTHME_MODULE_NAME, pc->pc_userid, pc->pc_psc->psc_user_id);
-    
+
+    authme_service_shutdown();
     return PAM_AUTH_ERR;
     
 }

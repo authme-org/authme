@@ -38,7 +38,7 @@
 #include <string.h>
 
 /* For logging and other reasons */
-#define AUTHME_MODULE_NAME "pam_authme v0.1"
+#define AUTHME_MODULE_NAME "pam_authme v0.1.0"
 /* For storing data in the pam subsystem */
 #define AUTHME_CONFIG_DATA "pam_authme_config"
 
