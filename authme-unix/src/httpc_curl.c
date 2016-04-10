@@ -56,6 +56,7 @@ httpc_curl_write_bfr_fn(void * ptr, size_t size, size_t nmemb, void *userdata) {
 	/* Now append to our data */
 	append_bfr((bfr_t *)userdata, bf);
 
+    free(bf);
 	return size * nmemb;
 
 }
@@ -94,10 +95,6 @@ httpc_curl_read_header_fn(void *ptr, size_t size, size_t nmemb, void *userdata)
 	/* Don't action unless it's worth it */
 	if (sz <= 10)
 		return sz;
-
-	char * buf = (char *)malloc(sz + 1);
-	memcpy(buf, ptr, sz);
-	buf[sz] = '\0';
 
 	/* Is this the Location Header? */
 #ifdef WIN32
@@ -183,12 +180,16 @@ httpc_curl_create_client(char * url, httpc_handle * hh) {
 	authme_httpc_curl_t * ahc;
 
 	ahc = (authme_httpc_curl_t *)malloc(sizeof(authme_httpc_curl_t));
+    if (ahc == NULL)
+        return AUTHME_ERR_OUT_OF_MEMORY;
+    
 	memset(ahc, 0, sizeof(authme_httpc_curl_t));
 
 	ahc->ahc_curl = curl_easy_init();
 
 	if (!ahc->ahc_curl)
 	{
+        free(ahc);
 		return AUTHME_ERR_OUT_OF_MEMORY;
 	}
 

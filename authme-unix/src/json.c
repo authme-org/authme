@@ -41,6 +41,7 @@
 #endif
 
 #define _JSON_CHECK_INDEX(I,M,R) if (I>= M) return R
+#define _JSON_CHECK_INDEX_AND_FREE(I,M,R,F) if (I>= M) { if (F!=NULL) free(F); return R;}
 
 size_t
 json_scan_for_char(unsigned char * b, size_t i,
@@ -372,6 +373,8 @@ json_parse_object(unsigned char * b, size_t i,
         
     /* Looks like it might be valid JSON */
     while (i < max) {
+        key = NULL;
+        
         /* Loop through looking for key  */
         if (b[i] != '"')
             return max;
@@ -380,16 +383,18 @@ json_parse_object(unsigned char * b, size_t i,
         i = json_parse_string(b,i,max,&key);
                 
         i = json_skip_white_space(b,i,max);
-        _JSON_CHECK_INDEX(i,max,max);
+        _JSON_CHECK_INDEX_AND_FREE(i,max,max,key);
 
         if (b[i] != ':') {
             // Expected ':' in JSON parse
+            if (key != NULL)
+                free(key);
             return max;
         }
 
         i++;
         i = json_skip_white_space(b,i,max);
-        _JSON_CHECK_INDEX(i,max,max);
+        _JSON_CHECK_INDEX_AND_FREE(i,max,max,key);
                 
         /* this is now the value component of the object entry */
         /* set up the list */
@@ -451,7 +456,7 @@ json_parse(unsigned char * b)
     {
         json_t * ret = json_new();
         ret->type = OBJECT;
-        i = json_parse_object(b, i, max, ret);
+        json_parse_object(b, i, max, ret);
         return ret;
     }
     default:
@@ -537,7 +542,7 @@ json_to_string_value(json_t * json, char * str, size_t *sz)
     case (JSTRING):
         {
             char * ret = json_append_str(str, "\"", sz);
-            ret = json_append_str(str, json->js_str_value, sz);
+            ret = json_append_str(ret, json->js_str_value, sz);
             return json_append_str(ret, "\"", sz);
         }
     case (NUMBER):

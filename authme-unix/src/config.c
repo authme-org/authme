@@ -100,6 +100,7 @@ authme_config_t * authme_config_create(void)
     /* Sanity check */
     if (pc->pc_psc == NULL)
     {
+        free(pc);
         authme_do_log(FALSE, 
                      LOG_CRIT, 
                      "(%s) Error creating service configuration",

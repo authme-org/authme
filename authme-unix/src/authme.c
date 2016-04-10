@@ -588,9 +588,7 @@ main (int argc, char **argv)
             FILE * in = fopen(argv[p], "rt");
             if (in == NULL)
             {
-                fprintf(stderr, "Unable to open: ");
-                fprintf(stderr, argv[p]);
-                fprintf(stderr, "\n");
+                fprintf(stderr, "Unable to open: %s\n", argv[p]);
                 return -1;
             }
 
@@ -598,7 +596,7 @@ main (int argc, char **argv)
             {
                 fprintf(stderr, "Error in config file ");
                 if (psc->psc_last_error != NULL)
-                    fprintf(stderr, psc->psc_last_error);
+                    fprintf(stderr, "%s", psc->psc_last_error);
                 fprintf(stderr, "\n");
                 fclose(in);
                 return -1;

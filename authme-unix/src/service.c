@@ -123,64 +123,67 @@ authme_get_svc_check_status(authme_service_config_t * psc)
 
         ret_code = AUTHME_ERR_SERVICE_CONNECT_FAILED;
     }
-    
-    /* Output */
-	httpc_get_last_response_code(hh, &response_code);
-   
-	if (response_code == 200) {
-		/* Find the actual status */
-		json_t * json = json_parse(b->b);
-		json_t * i = json_get_item_by_key(json, "status");
-		if (i != NULL && i->type == JSTRING)
-		{
-			/* Check what the status is */
-			ret_code = AUTHME_ERR_OK;
-			if (strcmp("APPROVED", i->js_str_value) == 0)
-				psc->psc_check_status = AUTHME_STATUS_APPROVED;
-			else if (strcmp("DECLINED", i->js_str_value) == 0)
-				psc->psc_check_status = AUTHME_STATUS_DECLINED;
-			else if (strcmp("SUBMITTED", i->js_str_value) == 0)
-				psc->psc_check_status = AUTHME_STATUS_SUBMITTED;
-			else
-			{
-				char buf[128];
-				psc->psc_check_status = AUTHME_STATUS_UNDEFINED;
-				snprintf(buf, 127, "Unknown status from service: %s", i->js_str_value);
-				psc->psc_last_error = strdup(buf);
-				ret_code = AUTHME_ERR_SERVICE_ERROR;
-			}
 
-		}
-		else {
-
-			ret_code = AUTHME_ERR_SERVICE_ERROR;
-		}
-
-		/* Check to see if there is an unwrapped Secret */
-		i = json_get_item_by_key(json, "unwrappedSecret");
-		if (i != NULL && i->type == JSTRING && i->js_str_value != NULL && strlen(i->js_str_value) > 0)
-		{
-			unsigned char * unwrapped_secret;
-			size_t unwrapped_secret_len;
-
-			if (mpass_envelope_decrypt(psc->psc_mpass, MPASS_SERVICE_PRIVATE_KEY, i->js_str_value, &unwrapped_secret, &unwrapped_secret_len) == AUTHME_ERR_OK)
-			{
-				/* We found a secret */
-				psc->psc_unwrapped_secret = unwrapped_secret;
-				psc->psc_unwrapped_secret_len = unwrapped_secret_len;
-			}
-
-		}
-
-		json_free(json);
-	}
-    else 
+    else
     {
-        char buf[128];
-        snprintf(buf, 128, "HTTP Error Code %d received from service", 
-                 response_code);
-        psc->psc_last_error = strdup(buf);
-        ret_code = AUTHME_ERR_SERVICE_RETURNED_ERR;
+        /* Output */
+        httpc_get_last_response_code(hh, &response_code);
+        
+        if (response_code == 200) {
+            /* Find the actual status */
+            json_t * json = json_parse(b->b);
+            json_t * i = json_get_item_by_key(json, "status");
+            if (i != NULL && i->type == JSTRING)
+            {
+                /* Check what the status is */
+                ret_code = AUTHME_ERR_OK;
+                if (strcmp("APPROVED", i->js_str_value) == 0)
+                    psc->psc_check_status = AUTHME_STATUS_APPROVED;
+                else if (strcmp("DECLINED", i->js_str_value) == 0)
+                    psc->psc_check_status = AUTHME_STATUS_DECLINED;
+                else if (strcmp("SUBMITTED", i->js_str_value) == 0)
+                    psc->psc_check_status = AUTHME_STATUS_SUBMITTED;
+                else
+                {
+                    char buf[128];
+                    psc->psc_check_status = AUTHME_STATUS_UNDEFINED;
+                    snprintf(buf, 127, "Unknown status from service: %s", i->js_str_value);
+                    psc->psc_last_error = strdup(buf);
+                    ret_code = AUTHME_ERR_SERVICE_ERROR;
+                }
+                
+            }
+            else {
+                
+                ret_code = AUTHME_ERR_SERVICE_ERROR;
+            }
+
+            /* Check to see if there is an unwrapped Secret */
+            i = json_get_item_by_key(json, "unwrappedSecret");
+            if (i != NULL && i->type == JSTRING && i->js_str_value != NULL && strlen(i->js_str_value) > 0)
+            {
+                unsigned char * unwrapped_secret;
+                size_t unwrapped_secret_len;
+
+                if (mpass_envelope_decrypt(psc->psc_mpass, MPASS_SERVICE_PRIVATE_KEY, i->js_str_value, &unwrapped_secret, &unwrapped_secret_len) == AUTHME_ERR_OK)
+                {
+                    /* We found a secret */
+                    psc->psc_unwrapped_secret = unwrapped_secret;
+                    psc->psc_unwrapped_secret_len = unwrapped_secret_len;
+                }
+                
+            }
+
+            json_free(json);
+        }
+        else 
+        {
+            char buf[128];
+            snprintf(buf, 128, "HTTP Error Code %d received from service", 
+                     response_code);
+            psc->psc_last_error = strdup(buf);
+            ret_code = AUTHME_ERR_SERVICE_RETURNED_ERR;
+        }
     }
 
 	httpc_destroy_client(hh);
@@ -556,7 +559,6 @@ authme_set_secret(authme_service_config_t * psc, char * wrapped_secret)
 	i->js_next = json_new_string(wrapped_secret, "base64Data");
 	i = i->js_next;
 	i->js_next = json_new_string("A-temp-ID-for-secret", "ownerId");
-	i = i->js_next;
 
 	/* Transform to text */
 	put_buffer = json_to_string(j);
@@ -602,52 +604,56 @@ authme_set_secret(authme_service_config_t * psc, char * wrapped_secret)
 		ret_code = AUTHME_ERR_SERVICE_CONNECT_FAILED;
 	}
 
-	/* Output */
-	httpc_get_last_response_code(hh, &response_code);
+    else
+    {
 
-	ret_code = AUTHME_ERR_OK;
-	if (response_code == 201) {
+        /* Output */
+        httpc_get_last_response_code(hh, &response_code);
 
-		/* Find the actual status */
-		json_t * json = json_parse(c->b);
-		json_t * i = json_get_item_by_key(json, "success");
-		if (i != NULL && i->type == JTRUE)
-		{
-			if ((i = json_get_item_by_key(json, "blobUniqueIds")) != NULL &&
-				i->type == ARRAY  &&
-				i->js_child != NULL &&
-				i->js_child->type == JSTRING)
-			{
-				/* Have a string to put into the return */
-				psc->psc_secret_id = strdup(i->js_child->js_str_value);
-			}
-			else
-			{
-				psc->psc_last_error = strdup("Success but no IDs returned");
-				ret_code = AUTHME_ERR_SERVICE_ERROR;
-			}
-		}
-		else {
-			psc->psc_last_error = strdup("Service returned false in success flag");
-			ret_code = AUTHME_ERR_SERVICE_RETURNED_ERR;
-		}
-	}
+        ret_code = AUTHME_ERR_OK;
+        if (response_code == 201) {
 
-	else if (response_code == 404)
-	{
-		psc->psc_last_error = strdup("Unknown user passed to service");
-		ret_code = AUTHME_ERR_USER_UNKNOWN;
-	}
-	else
-	{
+            /* Find the actual status */
+            json_t * json = json_parse(c->b);
+            json_t * i = json_get_item_by_key(json, "success");
+            if (i != NULL && i->type == JTRUE)
+            {
+                if ((i = json_get_item_by_key(json, "blobUniqueIds")) != NULL &&
+                    i->type == ARRAY  &&
+                    i->js_child != NULL &&
+                    i->js_child->type == JSTRING)
+                {
+                    /* Have a string to put into the return */
+                    psc->psc_secret_id = strdup(i->js_child->js_str_value);
+                }
+                else
+                {
+                    psc->psc_last_error = strdup("Success but no IDs returned");
+                    ret_code = AUTHME_ERR_SERVICE_ERROR;
+                }
+            }
+            else {
+                psc->psc_last_error = strdup("Service returned false in success flag");
+                ret_code = AUTHME_ERR_SERVICE_RETURNED_ERR;
+            }
+        }
 
-		char buf[128];
-		snprintf(buf, 128, "HTTP Error Code %d received from service",
-			response_code);
-		psc->psc_last_error = strdup(buf);
-		ret_code = AUTHME_ERR_SERVICE_RETURNED_ERR;
-	}
+        else if (response_code == 404)
+        {
+            psc->psc_last_error = strdup("Unknown user passed to service");
+            ret_code = AUTHME_ERR_USER_UNKNOWN;
+        }
+        else
+        {
 
+            char buf[128];
+            snprintf(buf, 128, "HTTP Error Code %d received from service",
+                     response_code);
+            psc->psc_last_error = strdup(buf);
+            ret_code = AUTHME_ERR_SERVICE_RETURNED_ERR;
+        }
+    }
+    
 	httpc_destroy_client(hh);
 	free_bfr(c);
 	free_bfr(b);
@@ -700,13 +706,11 @@ authme_start_svc_check(authme_service_config_t * psc)
 	{
 		i->js_next = json_new_string(psc->psc_wrapped_secret,
 			"wrappedSecret");
-		i = i->js_next;
 	}
 	else if (psc->psc_secret_id)
 	{
 		i->js_next = json_new_string(psc->psc_secret_id,
 			"secretId");
-		i = i->js_next;
 	}
 
 	/* Transform to text */
@@ -758,44 +762,48 @@ authme_start_svc_check(authme_service_config_t * psc)
 		ret_code = AUTHME_ERR_SERVICE_CONNECT_FAILED;
 	}
 
-	/* Output */
-	httpc_get_last_response_code(hh, &response_code);
-	if (response_code == 201) {
-		if (hdr->b[0] != '\0') {
-			/* Find the check's URL and ID */
-			size_t i;
-			psc->psc_check_url = strdup(hdr->b);
-			for (i = 0; psc->psc_check_url[i] != '=' &&
-				psc->psc_check_url[i] != '\0'; ++i);
+    else
+    {
+
+        /* Output */
+        httpc_get_last_response_code(hh, &response_code);
+        if (response_code == 201) {
+            if (hdr->b[0] != '\0') {
+                /* Find the check's URL and ID */
+                size_t i;
+                psc->psc_check_url = strdup(hdr->b);
+                for (i = 0; psc->psc_check_url[i] != '=' &&
+                         psc->psc_check_url[i] != '\0'; ++i);
 
 				if (psc->psc_check_url[i] == '=')
 					psc->psc_check_id = strdup(&psc->psc_check_url[i + 1]);
 
-			/* Set for status checks */
-			psc->psc_check_status = AUTHME_STATUS_SUBMITTED;
-			ret_code = AUTHME_ERR_OK;
-		}
-		else
-		{
-			psc->psc_last_error = strdup("Service call succeeded, but did not return a valid Check ID");
-			ret_code = AUTHME_ERR_SERVICE_ERROR;
-		}
-	}
+                /* Set for status checks */
+                psc->psc_check_status = AUTHME_STATUS_SUBMITTED;
+                ret_code = AUTHME_ERR_OK;
+            }
+            else
+            {
+                psc->psc_last_error = strdup("Service call succeeded, but did not return a valid Check ID");
+                ret_code = AUTHME_ERR_SERVICE_ERROR;
+            }
+        }
 
-	else if (response_code == 404)
-	{
-		psc->psc_last_error = strdup("Unknown user passed to service");
-		ret_code = AUTHME_ERR_USER_UNKNOWN;
-	}
-	else
-	{
+        else if (response_code == 404)
+        {
+            psc->psc_last_error = strdup("Unknown user passed to service");
+            ret_code = AUTHME_ERR_USER_UNKNOWN;
+        }
+        else
+        {
 
-		char buf[128];
-		snprintf(buf, 128, "HTTP Error Code %d received from service",
-			response_code);
-		psc->psc_last_error = strdup(buf);
-		ret_code = AUTHME_ERR_SERVICE_RETURNED_ERR;
-	}
+            char buf[128];
+            snprintf(buf, 128, "HTTP Error Code %d received from service",
+                     response_code);
+            psc->psc_last_error = strdup(buf);
+            ret_code = AUTHME_ERR_SERVICE_RETURNED_ERR;
+        }
+    }
 
 	free_bfr(hdr);
 	free_bfr(b);
