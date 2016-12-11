@@ -40,8 +40,8 @@ class DeviceInfo {
     var type = ""
     var validated = false
     
-    func jsonReader(json: NSDictionary, key: String) -> String {
-        if let inString = json.objectForKey(key) as? NSString {
+    func jsonReader(_ json: NSDictionary, key: String) -> String {
+        if let inString = json.object(forKey: key) as? NSString {
             return inString as String
         }
         
@@ -60,10 +60,10 @@ class DeviceInfo {
         serviceKeyStatus = jsonReader(json, key: "serviceKeyStatus")
         type = jsonReader(json, key: "type")
 
-        if let inBool = json.objectForKey("validated") as? Bool {
+        if let inBool = json.object(forKey: "validated") as? Bool {
             validated = inBool
         }
-        if let inBool = json.objectForKey("isSelected") as? Bool {
+        if let inBool = json.object(forKey: "isSelected") as? Bool {
             isSelected = inBool
         }
     }

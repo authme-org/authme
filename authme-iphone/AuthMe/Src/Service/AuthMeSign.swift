@@ -47,7 +47,7 @@ class AuthMeSign : AuthMeServiceDelegate {
         authme = AuthMeService()
     }
 
-    func doSign(toSign: String, keyPair: RSAKey, delegate: AuthMeSignDelegate, withOpaqueData opaqueData: AnyObject?) {
+    func doSign(_ toSign: String, keyPair: RSAKey, delegate: AuthMeSignDelegate, withOpaqueData opaqueData: AnyObject?) {
         self.toSign = toSign
         self.keyPair = keyPair
         self.delegate = delegate
@@ -62,10 +62,10 @@ class AuthMeSign : AuthMeServiceDelegate {
     }
     
     
-    func service(service: AuthMeService, didCompletOperation operation: AuthMeServiceOperation, withOpaqueData opaqueData: AnyObject?) {
+    func service(_ service: AuthMeService, didCompletOperation operation: AuthMeServiceOperation, withOpaqueData opaqueData: AnyObject?) {
         
-        if operation.operationType != AuthMeService.AuthMeOperationType.GetSignatureSeed {
-            logger.log(.ERROR, message: "Somehow got a authme return that isn't a signature seed into a signer object")
+        if operation.operationType != AuthMeService.AuthMeOperationType.getSignatureSeed {
+            logger.log(.error, message: "Somehow got a authme return that isn't a signature seed into a signer object")
                 return
         }
         
@@ -73,14 +73,14 @@ class AuthMeSign : AuthMeServiceDelegate {
         
         if operation.statusCode == 200 {
             if let readData = operation.returnData {
-                let json = (try! NSJSONSerialization.JSONObjectWithData(readData, options: NSJSONReadingOptions.MutableContainers)) as! NSDictionary
-                if (json.objectForKey("sigId") as? NSString != nil) && (json.objectForKey("dateTime") as? NSString != nil) {
-                    sigId = json.valueForKey("sigId") as! String
-                    dateTime = json.valueForKey("dateTime") as! String
+                let json = (try! JSONSerialization.jsonObject(with: readData as Data, options: JSONSerialization.ReadingOptions.mutableContainers)) as! NSDictionary
+                if (json.object(forKey: "sigId") as? NSString != nil) && (json.object(forKey: "dateTime") as? NSString != nil) {
+                    sigId = json.value(forKey: "sigId") as! String
+                    dateTime = json.value(forKey: "dateTime") as! String
                     
                     if keyPair != nil {
                         //signature = keyPair!.sign("\(sigId)\(toSign)".dataUsingEncoding(NSUTF8StringEncoding))
-                        signature = keyPair!.sign("\(sigId)\(dateTime)\(toSign)".dataUsingEncoding(NSUTF8StringEncoding))
+                        signature = keyPair!.sign("\(sigId)\(dateTime)\(toSign)".data(using: String.Encoding.utf8))
                         success = true
                     }
                 }

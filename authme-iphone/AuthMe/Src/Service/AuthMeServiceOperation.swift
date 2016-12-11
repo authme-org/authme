@@ -28,30 +28,30 @@ import Foundation
 
 import Foundation
 
-class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
+class AuthMeServiceOperation: Operation, NSURLConnectionDelegate {
     
     var logger = Log()
     
     let serviceIdentifier = "readercom.com"
     let usernameKey = "serviceUsername"
     
-    var url: NSURL? = nil
+    var url: URL? = nil
     var connection: NSURLConnection? = nil
     
     var returnData: NSMutableData? = nil
-    var postData: NSData? = nil
+    var postData: Data? = nil
     var error: NSError? = nil
     var secureRequest = false
     var statusCode: Int = 0
     
     /* Actually an opaque type to this guy */
-    var operationType = AuthMeService.AuthMeOperationType.UnknownOperation
+    var operationType = AuthMeService.AuthMeOperationType.unknownOperation
     var opaqueData: AnyObject? = nil
     var delegate: AuthMeServiceDelegate? = nil
     
     init(url: NSString) {
         
-        self.url = NSURL(string: url as String)
+        self.url = URL(string: url as String)
         _executing = false;
         _finished = false;
         _concurrent = true;
@@ -62,9 +62,9 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
     func start() {
         
         
-        if !NSThread.isMainThread() {
+        if !Thread.isMainThread {
             
-            dispatch_async(dispatch_get_main_queue(), {
+            DispatchQueue.main.async(execute: {
                 
                 self.start()
             })
@@ -72,26 +72,26 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
         }
         
         if url == nil {
-            logger.log(.ERROR, message: "Error in ReadercomServiceOperation - URL not defined")
+            logger.log(.error, message: "Error in ReadercomServiceOperation - URL not defined")
             return
         }
         
-        self.willChangeValueForKey("isExecuting")
-        self.executing = true
-        self.didChangeValueForKey("isExecuting")
+        self.willChangeValue(forKey: "isExecuting")
+        self.isExecuting = true
+        self.didChangeValue(forKey: "isExecuting")
         
-        logger.log(.DEBUG, message: "Starting service thread for \(url)")
+        logger.log(.debug, message: "Starting service thread for \(url)")
         
         /* Now kick off the connection! */
-        let urlRequest = NSMutableURLRequest(URL: url!)
+        let urlRequest = NSMutableURLRequest(url: url!)
         
         /* For a post - add the right headers and the data to the request */
         if let toPost = postData {
-            urlRequest.HTTPMethod = "PUT"
-            let postLength = String(toPost.length)
+            urlRequest.httpMethod = "PUT"
+            let postLength = String(toPost.count)
             urlRequest.setValue(postLength, forHTTPHeaderField: "Content-Length")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            urlRequest.HTTPBody = toPost
+            urlRequest.httpBody = toPost
         }
         
         if secureRequest == true {
@@ -99,12 +99,12 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
             let appConfiguration = AppConfiguration.getInstance()
             
             // Need to add username and password
-            if let username = appConfiguration.getConfigItem(usernameKey) as? String {
+            if let username = appConfiguration.getConfigItem(usernameKey as NSString) as? String {
                 if username != ""  { //appConfiguration.getConfigItem(usernameKey) as? String {
                     let usernamePassword = username + ":" + appConfiguration.getServicePassword()
                 
-                    if let raw = usernamePassword.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
-                        let base64 = raw.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+                    if let raw = usernamePassword.data(using: String.Encoding.utf8, allowLossyConversion: false) {
+                        let base64 = raw.base64EncodedString(options: NSData.Base64EncodingOptions.lineLength64Characters)
                     
                         // Add to headers
                         let fullHeader = "Basic " + base64
@@ -116,8 +116,8 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
         else {
             
             // Have to clear cookies - grrr
-            let cookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-            if let cookies = cookieStorage.cookiesForURL(url!) {
+            let cookieStorage = HTTPCookieStorage.shared
+            if let cookies = cookieStorage.cookies(for: url!) {
                 for cookie in cookies {
                     cookieStorage.deleteCookie(cookie )
                 }
@@ -125,16 +125,16 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
         }
         
         /* Start the request! */
-        connection = NSURLConnection(request: urlRequest, delegate: self)
+        connection = NSURLConnection(request: urlRequest as URLRequest, delegate: self)
         
     }
     
     func done() {
         
-        if !NSThread.isMainThread() {
+        if !Thread.isMainThread {
             
-            dispatch_async(dispatch_get_main_queue(), {
-                self.logger.log(.DEBUG, message: "Completing service operation on main thread")
+            DispatchQueue.main.async(execute: {
+                self.logger.log(.debug, message: "Completing service operation on main thread")
                 self.done()
             })
             return;
@@ -145,12 +145,12 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
             connection = nil
         }
         
-        self.willChangeValueForKey("isExecuting")
-        self.willChangeValueForKey("isFinished")
+        self.willChangeValue(forKey: "isExecuting")
+        self.willChangeValue(forKey: "isFinished")
         _executing = false
         _finished = true
-        self.didChangeValueForKey("isExecuting")
-        self.didChangeValueForKey("isFinished")
+        self.didChangeValue(forKey: "isExecuting")
+        self.didChangeValue(forKey: "isFinished")
         
     }
     
@@ -162,19 +162,19 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
     
     /* OVerride Functions and variables where needed */
     
-    override var executing : Bool {
+    override var isExecuting : Bool {
         get { return _executing }
         set { _executing = newValue }
     }
     var _executing : Bool
     
-    override var finished : Bool {
+    override var isFinished : Bool {
         get { return _finished }
         set { _finished = newValue }
     }
     var _finished : Bool
     
-    override var concurrent : Bool {
+    override var isConcurrent : Bool {
         get { return _concurrent }
         set { _concurrent = newValue }
     }
@@ -197,26 +197,26 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
     
     // MARK: NSURLConnection delegate methods
     
-    func connection(connection: NSURLConnection, didFailWithError error: NSError) {
+    func connection(_ connection: NSURLConnection, didFailWithError error: Error) {
         
-        if self.cancelled {
+        if self.isCancelled {
             self.doCancel()
         }
         else {
-            self.error = error;
+            self.error = error as NSError?;
             self.done()
         }
     }
     
-    func connection(connection: NSURLConnection!, didReceiveResponse response: NSURLResponse!) {
+    func connection(_ connection: NSURLConnection!, didReceiveResponse response: URLResponse!) {
         
-        if self.cancelled {
+        if self.isCancelled {
             self.doCancel()
             return
         }
         
         /* How are we looking? */
-        let httpResponse = response as! NSHTTPURLResponse
+        let httpResponse = response as! HTTPURLResponse
         statusCode = httpResponse.statusCode
         
         if statusCode == 200 || statusCode == 201 {
@@ -228,34 +228,34 @@ class AuthMeServiceOperation: NSOperation, NSURLConnectionDelegate {
         else {
             
             let statusError = "HTTP Error \(statusCode)"
-            let userInfo = NSDictionary(object: statusError, forKey: NSLocalizedDescriptionKey)
-            error = NSError(domain: "DownloadUrlOperation", code: statusCode, userInfo: userInfo as [NSObject : AnyObject])
+            let userInfo = NSDictionary(object: statusError, forKey: NSLocalizedDescriptionKey as NSCopying)
+            error = NSError(domain: "DownloadUrlOperation", code: statusCode, userInfo: userInfo as! [AnyHashable: Any])
             
-            logger.log(.WARN, message: statusError)
+            logger.log(.warn, message: statusError)
             
             self.done()
         }
     }
     
-    func connection(connection: NSURLConnection!, didReceiveData data: NSData!) {
+    func connection(_ connection: NSURLConnection!, didReceiveData data: Data!) {
         
-        if self.cancelled {
+        if self.isCancelled {
             self.doCancel()
             return
         }
         
-        self.returnData?.appendData(data)
+        self.returnData?.append(data)
         
     }
     
     /* We are done! */
-    func connectionDidFinishLoading(connection: NSURLConnection) {
+    func connectionDidFinishLoading(_ connection: NSURLConnection) {
         
-        if self.cancelled {
+        if self.isCancelled {
             self.doCancel()
             return
         }
-        logger.log(.DEBUG, message: "finishing service connection for \(url!)")
+        logger.log(.debug, message: "finishing service connection for \(url!)")
         self.done()
     }
     

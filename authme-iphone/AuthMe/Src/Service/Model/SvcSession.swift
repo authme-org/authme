@@ -36,51 +36,51 @@ class SvcSession {
     var serverString = ""
     var wrappedSecret = ""
     var unwrappedSecret = ""
-    var serverNSDate : NSDate
+    var serverNSDate : Date
 
     init(json: NSDictionary) {
         
-        if let statusIn = json.objectForKey("status") as? NSString {
+        if let statusIn = json.object(forKey: "status") as? NSString {
             status = statusIn as String
         }
-        if let checkIdIn = json.objectForKey("checkId") as? NSString {
+        if let checkIdIn = json.object(forKey: "checkId") as? NSString {
             checkId = checkIdIn as String
         }
-        if let serverIdIn = json.objectForKey("serverId") as? NSString {
+        if let serverIdIn = json.object(forKey: "serverId") as? NSString {
             serverId = serverIdIn as String
         }
-        if let serverNonceIn = json.objectForKey("serverNonce") as? NSString {
+        if let serverNonceIn = json.object(forKey: "serverNonce") as? NSString {
             serverNonce = serverNonceIn as String
         }
-        if let serverDateIn = json.objectForKey("serverDate") as? NSString {
+        if let serverDateIn = json.object(forKey: "serverDate") as? NSString {
             serverDate = serverDateIn as String
         }
-        if let serverStringIn = json.objectForKey("serverString") as? NSString {
+        if let serverStringIn = json.object(forKey: "serverString") as? NSString {
             serverString = serverStringIn as String
         }
-        if let unwrappedSecretIn = json.objectForKey("unwrappedSecret") as? NSString {
+        if let unwrappedSecretIn = json.object(forKey: "unwrappedSecret") as? NSString {
             unwrappedSecret = unwrappedSecretIn as String
         }
-        if let wrappedSecretIn = json.objectForKey("wrappedSecret") as? NSString {
+        if let wrappedSecretIn = json.object(forKey: "wrappedSecret") as? NSString {
             wrappedSecret = wrappedSecretIn as String
         }
         
         serverNSDate = SvcSession.dateFromAuthMeString(serverDate)
     }
     
-    class func dateFromAuthMeString(str: String) -> NSDate {
+    class func dateFromAuthMeString(_ str: String) -> Date {
     
         /* Convert an input string from the service to a date */
         /* Example date: Mon May 09 19:06:57 EST 2011 */
     
         // Convert string to date object
-        let dateFormat = NSDateFormatter()
+        let dateFormat = DateFormatter()
         dateFormat.dateFormat = "EEE MMM dd HH:mm:ss zzz yyyy"
-        if let ret = dateFormat.dateFromString(str) {
+        if let ret = dateFormat.date(from: str) {
             return ret
         }
         
-        return NSDate()
+        return Date()
     
     }
 }

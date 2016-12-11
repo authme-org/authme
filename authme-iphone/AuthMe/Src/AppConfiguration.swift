@@ -57,15 +57,15 @@ class AppConfiguration {
         didSet {
             
             // When this is set we load our initial config
-            let fetchRequest = NSFetchRequest()
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
             let entity =
-            NSEntityDescription.entityForName("AuthMeConfiguration", inManagedObjectContext: managedObjectContext!)
+            NSEntityDescription.entity(forEntityName: "AuthMeConfiguration", in: managedObjectContext!)
             fetchRequest.entity = entity
             
             var fetchResult: [AnyObject] = []
             
             do {
-                fetchResult = try managedObjectContext!.executeFetchRequest(fetchRequest) as [AnyObject]!
+                fetchResult = try managedObjectContext!.fetch(fetchRequest) as [AnyObject]!
             } catch _ {
             }
             
@@ -73,8 +73,8 @@ class AppConfiguration {
             if fetchResult.count == 0 {
                 
                 // Oh dear - need to create from scratch
-                logger.log(.INFO, message: "Creating default configuration")
-                cachedConfig = NSEntityDescription.insertNewObjectForEntityForName("AuthMeConfiguration", inManagedObjectContext: managedObjectContext!) as? AuthMeConfiguration
+                logger.log(.info, message: "Creating default configuration")
+                cachedConfig = NSEntityDescription.insertNewObject(forEntityName: "AuthMeConfiguration", into: managedObjectContext!) as? AuthMeConfiguration
                 self.setDefaultValues()
                 do {
                     try managedObjectContext?.save()
@@ -91,7 +91,7 @@ class AppConfiguration {
     class func getInstance() -> AppConfiguration {
         
         /* Check we are on the main thread.  Simple thread safety :) */
-        assert(NSThread.isMainThread(), "Error: Config must be called on main thread")
+        assert(Thread.isMainThread, "Error: Config must be called on main thread")
         
         return _singletonConfiguration
         
@@ -99,34 +99,34 @@ class AppConfiguration {
     
     // MARK: Get/Set
     
-    func getConfigItem(key: NSString) -> AnyObject? {
+    func getConfigItem(_ key: NSString) -> AnyObject? {
         
         if cachedConfig == nil {
             return nil
         }
         
         /* Check we are on the main thread.  Simple thread safety :) */
-        assert(NSThread.isMainThread(), "Error: Config must be called on main thread")
+        assert(Thread.isMainThread, "Error: Config must be called on main thread")
         
         var result: AnyObject? = nil
         
         if checkKeyIsValid(key) {
             
-            result = cachedConfig!.valueForKey(key as String)
+            result = cachedConfig!.value(forKey: key as String) as AnyObject?
         }
         
         return result
         
     }
     
-    func setConfigItem(key: NSString, value: AnyObject?) {
+    func setConfigItem(_ key: NSString, value: AnyObject?) {
         
         if cachedConfig == nil {
             return
         }
         
         /* Check we are on the main thread.  Simple thread safety :) */
-        assert(NSThread.isMainThread(), "Error: Config must be called on main thread")
+        assert(Thread.isMainThread, "Error: Config must be called on main thread")
         
         if checkKeyIsValid(key) {
             
@@ -140,7 +140,7 @@ class AppConfiguration {
     }
     
     
-    private func setDefaultValues() {
+    fileprivate func setDefaultValues() {
         
         // By default we assume we are not registered on this device
         cachedConfig?.registered = 0
@@ -152,14 +152,14 @@ class AppConfiguration {
         
         // Get the base url from the service configuration
         #if DEBUG
-            if let serviceBase = servicePlist.valueForKey("BaseURLDebug") as? NSString {
+            if let serviceBase = servicePlist.value(forKey: "BaseURLDebug") as? NSString {
                 cachedConfig?.serviceURL = serviceBase as String
             }
             else {
                 cachedConfig?.serviceURL = "http://pluto:8080/AuthMeWS/Svc"
             }
         #else
-            if let serviceBase = servicePlist.valueForKey("BaseURL") as? NSString {
+            if let serviceBase = servicePlist.value(forKey: "BaseURL") as? NSString {
                 cachedConfig?.serviceURL = serviceBase as String
             }
             else {
@@ -171,15 +171,15 @@ class AppConfiguration {
     
     // MARK: Password Handling
     
-    func setServicePassword(password: NSString) {
+    func setServicePassword(_ password: NSString) {
         
         let masterPassword = MasterPassword.getInstance()
         if masterPassword.storeKey != nil {
             
             /* Encrypt the key */
-            if let passwordAsData = password.dataUsingEncoding(NSUTF8StringEncoding) {
-                let encryptedPassword = masterPassword.storeKey!.encrypt(passwordAsData, plainLength: passwordAsData.length)
-                setConfigItem("servicePassword", value: encryptedPassword)
+            if let passwordAsData = password.data(using: String.Encoding.utf8.rawValue) {
+                let encryptedPassword = masterPassword.storeKey!.encrypt(passwordAsData, plainLength: passwordAsData.count)
+                setConfigItem("servicePassword", value: encryptedPassword as AnyObject?)
             }
         }
     }
@@ -190,7 +190,7 @@ class AppConfiguration {
             let masterPassword = MasterPassword.getInstance()
             if masterPassword.storeKey != nil {
                 if let decryptedPassword = masterPassword.storeKey?.decrypt(encryptedPassword, cipherLength: encryptedPassword.characters.count) {
-                    if let retString = NSString(data: decryptedPassword, encoding: NSUTF8StringEncoding) {
+                    if let retString = NSString(data: decryptedPassword as Data, encoding: String.Encoding.utf8.rawValue) {
                         return retString as String
                     }
                 }
@@ -200,12 +200,12 @@ class AppConfiguration {
     }
     
     // MARK: Service properties
-    func getServiceUrl(entryPoint: String) -> String {
+    func getServiceUrl(_ entryPoint: String) -> String {
         
-        var base = cachedConfig!.valueForKey("serviceURL") as? String
+        var base = cachedConfig!.value(forKey: "serviceURL") as? String
         
         if base == nil {
-            base = servicePlist.valueForKey(baseURLKey) as? String
+            base = servicePlist.value(forKey: baseURLKey) as? String
             if base == nil {
                 return ""
             }
@@ -213,8 +213,8 @@ class AppConfiguration {
         
         // Now find the appropriate relative URL for the entry point
         var relativeURL = ""
-        if let entryPointsDict = servicePlist.valueForKey(entryPointsKey) as? NSDictionary {
-            if let relURL = entryPointsDict.valueForKey(entryPoint) as? String {
+        if let entryPointsDict = servicePlist.value(forKey: entryPointsKey) as? NSDictionary {
+            if let relURL = entryPointsDict.value(forKey: entryPoint) as? String {
                 relativeURL = relURL
             }
         }
@@ -227,14 +227,14 @@ class AppConfiguration {
     func getNewUserUrl() -> String {
         
         #if DEBUG
-            if let newUserUrl = servicePlist.valueForKey("NewUserURLDebug") as? String {
+            if let newUserUrl = servicePlist.value(forKey: "NewUserURLDebug") as? String {
                 return newUserUrl
             }
             else {
                 return "http://pluto:8080/readercom/new-user.ss"
             }
         #else
-            if let newUserUrl = servicePlist.valueForKey("NewUserURL") as? NSString {
+            if let newUserUrl = servicePlist.value(forKey: "NewUserURL") as? NSString {
                 return newUserUrl as String;
             }
             else {
@@ -245,10 +245,10 @@ class AppConfiguration {
     }
     
     // MARK: Helper functions
-    private func checkKeyIsValid(key: NSString) -> Bool {
+    fileprivate func checkKeyIsValid(_ key: NSString) -> Bool {
         
         for knownKey in knownConfigKeys {
-            if knownKey == key {
+            if knownKey == key as String {
                 return true
             }
         }
@@ -263,7 +263,7 @@ class AppConfiguration {
             return _servicePlist!
         }
         
-        if let servicePath = NSBundle.mainBundle().pathForResource(servicePlistFile, ofType: "plist") {
+        if let servicePath = Bundle.main.path(forResource: servicePlistFile, ofType: "plist") {
             _servicePlist = NSDictionary(contentsOfFile: servicePath)
         }
         else {

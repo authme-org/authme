@@ -34,7 +34,7 @@ class ConfigurationMainMenuController: UITableViewController {
     
     let configTemplatePlist = "ConfigurationSetup"
     
-    var currentIndexPath: NSIndexPath? = nil
+    var currentIndexPath: IndexPath? = nil
     var detailMenuController: ConfigurationDetailMenuController? = nil
     var storedEditFields: NSMutableDictionary? = nil
     
@@ -42,7 +42,7 @@ class ConfigurationMainMenuController: UITableViewController {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             self.clearsSelectionOnViewWillAppear = false
             self.preferredContentSize = CGSize(width: 320.0, height: 600.0)
         }
@@ -64,65 +64,65 @@ class ConfigurationMainMenuController: UITableViewController {
         
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         if firstAppearance {
             firstAppearance = false
             
             let appConfiguration = AppConfiguration.getInstance()
             if appConfiguration.getConfigItem("serviceUsername") as! String? == nil ||
                 appConfiguration.getConfigItem("serviceUsername") as! String? == "" {
-                    logger.log(.DEBUG, message: "Loading for no username")
-                    self.tableView.selectRowAtIndexPath(NSIndexPath(forItem: 0, inSection: 0), animated: true, scrollPosition: UITableViewScrollPosition.Bottom)
-                    self.performSegueWithIdentifier("showConfigDetail", sender: self)
+                    logger.log(.debug, message: "Loading for no username")
+                    self.tableView.selectRow(at: IndexPath(item: 0, section: 0), animated: true, scrollPosition: UITableViewScrollPosition.bottom)
+                    self.performSegue(withIdentifier: "showConfigDetail", sender: self)
                     //self.tableView(self.tableView, selectRowAtIndexPath: NSIndexPath(forItem: 0, inSection: 0))
                     
                     // Tell the user they need to take some action
                     let alert = UIAlertController(title: "Credentials Required",
-                    message: "Please enter credentials or create a new account for the AuthMe service", preferredStyle: UIAlertControllerStyle.Alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-                    self.presentViewController(alert, animated: true, completion: nil)
+                    message: "Please enter credentials or create a new account for the AuthMe service", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
                     
 
             }
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         // If we were swapped out - reload
         if let visibleCells = self.tableView.indexPathsForVisibleRows {
-            self.tableView.reloadRowsAtIndexPaths(visibleCells, withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView.reloadRows(at: visibleCells, with: UITableViewRowAnimation.automatic)
         }
         
         if self.splitViewController != nil {
-            if (currentIndexPath != nil) && !(self.splitViewController!.collapsed) {
+            if (currentIndexPath != nil) && !(self.splitViewController!.isCollapsed) {
                 storedEditFields = detailMenuController?.editFields
-                self.tableView.selectRowAtIndexPath(currentIndexPath, animated: false, scrollPosition: UITableViewScrollPosition.None)
-                self.performSegueWithIdentifier("showConfigDetail", sender: self)
+                self.tableView.selectRow(at: currentIndexPath, animated: false, scrollPosition: UITableViewScrollPosition.none)
+                self.performSegue(withIdentifier: "showConfigDetail", sender: self)
                 storedEditFields = nil
             }
         }
     }
 
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return true
     }
     
     // MARK: - Segues
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showConfigDetail" && self.splitViewController != nil {
             if let indexPath = self.tableView.indexPathForSelectedRow {
                 currentIndexPath = indexPath
                 //let object = self.feedUpdateController.feedAtIndexPath(indexPath)
-                let controller = (segue.destinationViewController as! UINavigationController).topViewController as! ConfigurationDetailMenuController
+                let controller = (segue.destination as! UINavigationController).topViewController as! ConfigurationDetailMenuController
                 var _config: NSDictionary? = nil
-                if let dict = configTemplate.objectAtIndex(indexPath.section) as? NSDictionary {
-                    if let array = dict.objectForKey("ConfigurationItems") as? NSArray {
-                        _config = array.objectAtIndex(indexPath.row) as? NSDictionary
+                if let dict = configTemplate.object(at: indexPath.section) as? NSDictionary {
+                    if let array = dict.object(forKey: "ConfigurationItems") as? NSArray {
+                        _config = array.object(at: indexPath.row) as? NSDictionary
                     }
                 }
-                let newConfigArray = _config?.objectForKey("SubMenu") as? NSArray
+                let newConfigArray = _config?.object(forKey: "SubMenu") as? NSArray
                 controller.configTemplate = newConfigArray
                 detailMenuController = controller
                 
@@ -130,7 +130,7 @@ class ConfigurationMainMenuController: UITableViewController {
                 //controller.masterViewController = self
                 //controller.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "test", style: UIBarButtonItemStyle.Plain, target: self.splitViewController!.displayModeButtonItem().target, action: self.splitViewController!.displayModeButtonItem().action)// self.splitViewController!.displayModeButtonItem()
                 
-                if let subTitle = _config?.objectForKey("DisplayNameShort") as? NSString {
+                if let subTitle = _config?.object(forKey: "DisplayNameShort") as? NSString {
                     controller.navigationItem.title = subTitle as String
                 }
                 else {
@@ -145,17 +145,17 @@ class ConfigurationMainMenuController: UITableViewController {
     
     // MARK: Data Source
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // Return the number of sections.
         
         return configTemplate.count
         
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        if let dict = configTemplate.objectAtIndex(section) as? NSDictionary {
-            if let array = dict.objectForKey("ConfigurationItems") as? NSArray {
+        if let dict = configTemplate.object(at: section) as? NSDictionary {
+            if let array = dict.object(forKey: "ConfigurationItems") as? NSArray {
                 return array.count
             }
         }
@@ -164,10 +164,10 @@ class ConfigurationMainMenuController: UITableViewController {
         
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String {
 
-        if let dict = configTemplate.objectAtIndex(section) as? NSDictionary {
-            if let str = dict.objectForKey("GroupName") as? String {
+        if let dict = configTemplate.object(at: section) as? NSDictionary {
+            if let str = dict.object(forKey: "GroupName") as? String {
                 return str
             }
         }
@@ -176,9 +176,9 @@ class ConfigurationMainMenuController: UITableViewController {
     
     }
     
-    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
-        if let dict = configTemplate.objectAtIndex(section) as? NSDictionary {
-            if let str = dict.objectForKey("GroupDescription") as? String {
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String {
+        if let dict = configTemplate.object(at: section) as? NSDictionary {
+            if let str = dict.object(forKey: "GroupDescription") as? String {
                 return str
             }
         }
@@ -197,22 +197,22 @@ class ConfigurationMainMenuController: UITableViewController {
     // MARK: Cell Configurer
     
     // Customize the appearance of table view cells.
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        logger.log(.FINE, message: "At start of cellForRowAtIndexPath")
+        logger.log(.fine, message: "At start of cellForRowAtIndexPath")
         
         
         /* Load the specific configuration section for where we are */
         var _config: NSDictionary? = nil
         
-        if let dict = configTemplate.objectAtIndex(indexPath.section) as? NSDictionary {
-            if let array = dict.objectForKey("ConfigurationItems") as? NSArray {
-                _config = array.objectAtIndex(indexPath.row) as? NSDictionary
+        if let dict = configTemplate.object(at: indexPath.section) as? NSDictionary {
+            if let array = dict.object(forKey: "ConfigurationItems") as? NSArray {
+                _config = array.object(at: indexPath.row) as? NSDictionary
             }
         }
         
         if _config == nil {
-            logger.log(.ERROR, message: "Error loading configTemplate")
+            logger.log(.error, message: "Error loading configTemplate")
             return UITableViewCell()
         }
         
@@ -224,10 +224,10 @@ class ConfigurationMainMenuController: UITableViewController {
         
         var leftLabel: UILabel? = nil
         
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as UITableViewCell?
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as UITableViewCell?
         leftLabel = cell?.viewWithTag(LEFT_LABEL_TAG) as? UILabel
         
-        if let str = config.objectForKey("DisplayNameShort") as? String {
+        if let str = config.object(forKey: "DisplayNameShort") as? String {
             leftLabel?.text = str
         }
         else {
@@ -254,7 +254,7 @@ class ConfigurationMainMenuController: UITableViewController {
             return _configTemplate!
         }
             
-        if let path = NSBundle.mainBundle().pathForResource(configTemplatePlist, ofType: "plist") {
+        if let path = Bundle.main.path(forResource: configTemplatePlist, ofType: "plist") {
             _configTemplate = NSArray(contentsOfFile: path)
         }
         else {
@@ -264,18 +264,18 @@ class ConfigurationMainMenuController: UITableViewController {
         /* If we are in release mode, remove anything debug related */
         
         #if DEBUG
-            logger.log(.DEBUG, message: "Loading DEBUG Configuration Items")
+            logger.log(.debug, message: "Loading DEBUG Configuration Items")
         #else
             let newConfigTemplate = NSMutableArray()
                 
             for item in _configTemplate as! [NSDictionary] {
-                if let confElementIsDebug = item.valueForKey("DebugOnly") as? Bool {
+                if let confElementIsDebug = item.value(forKey: "DebugOnly") as? Bool {
                     if !confElementIsDebug {
-                        newConfigTemplate.addObject(item)
+                        newConfigTemplate.add(item)
                     }
                 }
                 else {
-                    newConfigTemplate.addObject(item)
+                    newConfigTemplate.add(item)
                 }
             }
             

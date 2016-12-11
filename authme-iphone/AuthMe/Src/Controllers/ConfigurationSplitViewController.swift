@@ -34,12 +34,12 @@ class ConfigurationSplitViewController: UISplitViewController, UISplitViewContro
         // Do any additional setup after loading the view, typically from a nib.
         self.delegate = self;
         
-        self.preferredDisplayMode = .AllVisible
+        self.preferredDisplayMode = .allVisible
     }
 
     // MARK: - Split view
     
-    func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController:UIViewController, ontoPrimaryViewController primaryViewController:UIViewController) -> Bool {
+    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
         if let secondaryAsNavController = secondaryViewController as? UINavigationController {
             if let _ = secondaryAsNavController.topViewController as? ConfigurationDetailMenuController {
                 // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
@@ -49,10 +49,10 @@ class ConfigurationSplitViewController: UISplitViewController, UISplitViewContro
         return true
     }
 
-    func targetDisplayModeForActionInSplitViewController(svc: UISplitViewController) -> UISplitViewControllerDisplayMode {
+    func targetDisplayModeForAction(in svc: UISplitViewController) -> UISplitViewControllerDisplayMode {
         
         /* We always operate our config in split view */
-        return .AllVisible
+        return .allVisible
         
     }
     

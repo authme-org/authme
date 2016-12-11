@@ -38,7 +38,7 @@ class DeviceListController: UITableViewController, MasterPasswordCallback, AuthM
     var devices : [DeviceInfo] = []
     var authMe = AuthMeService()
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
         
@@ -49,7 +49,7 @@ class DeviceListController: UITableViewController, MasterPasswordCallback, AuthM
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         let reloadImage = UIImage(named: "AuthMe-Nav-Reload.png")
-        let reloadButton = UIBarButtonItem(image: reloadImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(DeviceListController.reloadDevices))
+        let reloadButton = UIBarButtonItem(image: reloadImage, style: UIBarButtonItemStyle.plain, target: self, action: #selector(DeviceListController.reloadDevices))
         let actionItems = [reloadButton]
         
         self.navigationItem.rightBarButtonItems = actionItems
@@ -67,49 +67,49 @@ class DeviceListController: UITableViewController, MasterPasswordCallback, AuthM
     }
     
     // MARK: TableView implementation
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Registered Devices"
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return devices.count
     }
     
     
     // Auth has been selected
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         /* Sanity checks */
         if indexPath.section != 0 || indexPath.row < 0 || indexPath.row >= devices.count {
-            logger.log(.ERROR, message: "Recieved a stupid index path entry")
+            logger.log(.error, message: "Recieved a stupid index path entry")
             return
         }
         
         let device = devices[indexPath.row]
         
-        logger.log(.FINE, message: "didSelectRowAtIndexPath for \(device.deviceUniqueId)")
+        logger.log(.fine, message: "didSelectRowAtIndexPath for \(device.deviceUniqueId)")
         
         /* Create an alert controller to ask user if this is OK to approve */
         let alert = UIAlertController(title: "Approve Device",
-            message: "Register this device?", preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default, handler: {(UIAlertAction) in
+            message: "Register this device?", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: {(UIAlertAction) in
             self.approve(device)
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
         
-        UIApplication.sharedApplication().keyWindow!.rootViewController!.presentViewController(alert, animated: true, completion: nil)
+        UIApplication.shared.keyWindow!.rootViewController!.present(alert, animated: true, completion: nil)
         
-        self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        self.tableView.deselectRow(at: indexPath, animated: true)
         
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("DeviceCell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath)
         
         let device = devices[indexPath.row]
         
@@ -130,7 +130,7 @@ class DeviceListController: UITableViewController, MasterPasswordCallback, AuthM
         return cell
     }
     
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
@@ -148,18 +148,18 @@ class DeviceListController: UITableViewController, MasterPasswordCallback, AuthM
     }
     
     // MARK: Service Callback
-    func service(service: AuthMeService, didCompletOperation operation: AuthMeServiceOperation, withOpaqueData opaqueData: AnyObject?) {
+    func service(_ service: AuthMeService, didCompletOperation operation: AuthMeServiceOperation, withOpaqueData opaqueData: AnyObject?) {
         
         // This basically works through each of the steps to initialise
         
         switch operation.operationType {
             
-        case .GetDevices:
-            logger.log(.DEBUG, message: "Service callback for GetDevices")
+        case .getDevices:
+            logger.log(.debug, message: "Service callback for GetDevices")
             if operation.statusCode == 200 {
                 if let readData = operation.returnData {
-                    if let json = (try? NSJSONSerialization.JSONObjectWithData(readData, options: NSJSONReadingOptions.MutableContainers)) as? NSDictionary {
-                        if let jsonDeviceList = json.objectForKey("devices") as? NSArray {
+                    if let json = (try? JSONSerialization.jsonObject(with: readData as Data, options: JSONSerialization.ReadingOptions.mutableContainers)) as? NSDictionary {
+                        if let jsonDeviceList = json.object(forKey: "devices") as? NSArray {
                             
                             // Alll existing authchecks are erased
                             devices = []
@@ -177,17 +177,17 @@ class DeviceListController: UITableViewController, MasterPasswordCallback, AuthM
                 }
             }
             
-        case .SetServiceKey:
-            logger.log(.DEBUG, message: "Service callback for SetServiceKey")
+        case .setServiceKey:
+            logger.log(.debug, message: "Service callback for SetServiceKey")
             
             if operation.statusCode != 201 {
-                logger.log(.WARN, message: "Upload of device service key failed")
+                logger.log(.warn, message: "Upload of device service key failed")
             }
             
             self.reloadDevices()
                 
         default:
-            logger.log(.ERROR, message: "Unknown service operation returned!")
+            logger.log(.error, message: "Unknown service operation returned!")
         }
     }
     
@@ -198,33 +198,33 @@ class DeviceListController: UITableViewController, MasterPasswordCallback, AuthM
             return
         }
         
-        logger.log(.FINE, message: "reloading devices")
+        logger.log(.fine, message: "reloading devices")
         authMe.getDevices(self)
         
     }
     
-    func approve(device: DeviceInfo) {
+    func approve(_ device: DeviceInfo) {
         
         /* Authorise this device with the service */
         let deviceKey = RSAKey()
         deviceKey.loadPublicKey(device.publicKey)
         
         /* Encrypt the service key using the device public key */
-        if let aesKey = masterPassword?.serviceKey?.getKeyAsData() {
-            let encryptedServiceKey = deviceKey.encrypt(aesKey, plainLength: aesKey.length)
-            device.encryptedData = encryptedServiceKey
+        if let aesKey = masterPassword?.serviceKey?.getAsData() {
+            let encryptedServiceKey = deviceKey.encrypt(aesKey, plainLength: aesKey.count)
+            device.encryptedData = encryptedServiceKey!
             
             /* sign */
             let signature = AuthMeSign()
-            signature.doSign(device.deviceUniqueId + masterPassword!.serviceKey!.getKCV() + encryptedServiceKey,
+            signature.doSign(device.deviceUniqueId + masterPassword!.serviceKey!.getKCV() + encryptedServiceKey!,
                 keyPair: masterPassword!.deviceRSAKey!, delegate: self, withOpaqueData: device)
             
         }
     }
     
     // AuthMeSign delegate return
-    func signerDidComplete(signer: AuthMeSign, didSucceed: Bool, withOpaqueData opaqueData: AnyObject?) {
-        logger.log(.FINEST, message: "AuthMeSign returned to controller")
+    func signerDidComplete(_ signer: AuthMeSign, didSucceed: Bool, withOpaqueData opaqueData: AnyObject?) {
+        logger.log(.finest, message: "AuthMeSign returned to controller")
         
         if let di = opaqueData as? DeviceInfo {
             

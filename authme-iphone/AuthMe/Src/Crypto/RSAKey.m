@@ -720,7 +720,7 @@ size_t encodeLengthASN(unsigned char * buf, size_t length) {
 	// Now lets extract the public key - build query to get bits
 	NSMutableDictionary * queryPublicKey = [[NSMutableDictionary alloc] init];
 	
-	[queryPublicKey setObject:(__bridge id)kSecClassKey forKey:(__bridge id)kSecClass];
+    [queryPublicKey setObject:(__bridge id)kSecClassKey forKey:(__bridge id)kSecClass];
     [queryPublicKey setObject:publicTag forKey:(__bridge id)kSecAttrApplicationTag];
 	[queryPublicKey setObject:(__bridge id)kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
     [queryPublicKey setObject:(__bridge id)kSecAttrKeyClassPublic forKey:(__bridge id)kSecAttrKeyClass];

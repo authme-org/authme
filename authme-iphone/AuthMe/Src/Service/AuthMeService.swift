@@ -31,18 +31,18 @@ class AuthMeService : NSObject {
     let servicePlistFile = "ServiceConfig"
     
     enum AuthMeOperationType : Int {
-        case UnknownOperation = 0
-        case AddDevice = 1
-        case GetDevice = 2
-        case GetServiceKey = 3
-        case GetAuthChecks = 4
-        case GetSignatureSeed = 5
-        case SetAuthCheckStatus = 6
-        case SetServiceKey = 7
-        case GetDevices = 8
+        case unknownOperation = 0
+        case addDevice = 1
+        case getDevice = 2
+        case getServiceKey = 3
+        case getAuthChecks = 4
+        case getSignatureSeed = 5
+        case setAuthCheckStatus = 6
+        case setServiceKey = 7
+        case getDevices = 8
     }
     
-    var queue: NSOperationQueue? = nil
+    var queue: OperationQueue? = nil
     var logger = Log()
     
     //MARK: Setup and reset
@@ -53,7 +53,7 @@ class AuthMeService : NSObject {
         super.init()
         
         /* Create the operations queue */
-        self.queue = NSOperationQueue()
+        self.queue = OperationQueue()
         if let q = self.queue {
             q.maxConcurrentOperationCount = 4;
         }
@@ -66,7 +66,7 @@ class AuthMeService : NSObject {
     // MARK: Service Calls
     
     func addDevice(
-        deviceUniqueId : String,
+        _ deviceUniqueId : String,
         withName name: String,
         withType deviceType: String,
         withAPNToken apnToken: String?,
@@ -74,7 +74,7 @@ class AuthMeService : NSObject {
         withDelegate delegate: AuthMeServiceDelegate?) -> Bool
     {
     
-        logger.log(.DEBUG, message: "AddDevice called for device \(deviceUniqueId)")
+        logger.log(.debug, message: "AddDevice called for device \(deviceUniqueId)")
         
         // Create the operation
         let url = getServiceEntryURL("AddDevice")
@@ -82,26 +82,26 @@ class AuthMeService : NSObject {
             return false
         }
         
-        let operation = AuthMeServiceOperation(url: url)
+        let operation = AuthMeServiceOperation(url: url as NSString)
         operation.delegate = delegate
     
         // Create the POST data
         let params = NSMutableDictionary(
             objects: [deviceUniqueId, deviceType, publicKey, name],
-            forKeys: ["deviceUniqueId", "type", "publicKey", "name"])
+            forKeys: ["deviceUniqueId" as NSCopying, "type" as NSCopying, "publicKey" as NSCopying, "name" as NSCopying])
         
         /* Append APN data if we have it */
         if (apnToken != nil) && (apnToken != "") {
             params.setValue(apnToken, forKey: "apnToken")
         }
         
-        if let postData = try? NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions(rawValue: 0)) {
+        if let postData = try? JSONSerialization.data(withJSONObject: params, options: JSONSerialization.WritingOptions(rawValue: 0)) {
             operation.postData = postData
             operation.opaqueData = nil
-            operation.operationType = .AddDevice
+            operation.operationType = .addDevice
             operation.secureRequest = true
             
-            operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.New, context: nil)
+            operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.new, context: nil)
             queue?.addOperation(operation)
             
             return true
@@ -109,12 +109,12 @@ class AuthMeService : NSObject {
         return false
     }
     
-    func getDevice(deviceUniqueId: String,
+    func getDevice(_ deviceUniqueId: String,
         withNonce nonce: String,
         withOpaqueData opaque: AnyObject?,
         withDelegate delegate: AuthMeServiceDelegate) -> Bool
     {
-        logger.log(.DEBUG, message: "GetDevice called for device \(deviceUniqueId)")
+        logger.log(.debug, message: "GetDevice called for device \(deviceUniqueId)")
         
         // Create the operation
         let url = getServiceEntryURL("GetDevice") + "?deviceUniqueId=\(deviceUniqueId)&nonce=\(nonce)"
@@ -122,22 +122,22 @@ class AuthMeService : NSObject {
             return false
         }
         
-        let operation = AuthMeServiceOperation(url: url)
+        let operation = AuthMeServiceOperation(url: url as NSString)
         operation.delegate = delegate
         operation.postData = nil
         operation.opaqueData = opaque
-        operation.operationType = .GetDevice
+        operation.operationType = .getDevice
         operation.secureRequest = true
             
-        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.New, context: nil)
+        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.new, context: nil)
         queue?.addOperation(operation)
             
         return true
         
     }
     
-    func getDevices(delegate: AuthMeServiceDelegate) -> Bool {
-        logger.log(.DEBUG, message: "GetDevices called")
+    func getDevices(_ delegate: AuthMeServiceDelegate) -> Bool {
+        logger.log(.debug, message: "GetDevices called")
         
         // Create the operation
         let url = getServiceEntryURL("GetDevices")
@@ -145,23 +145,23 @@ class AuthMeService : NSObject {
             return false
         }
         
-        let operation = AuthMeServiceOperation(url: url)
+        let operation = AuthMeServiceOperation(url: url as NSString)
         operation.delegate = delegate
         operation.postData = nil
-        operation.operationType = .GetDevices
+        operation.operationType = .getDevices
         operation.secureRequest = true
         
-        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.New, context: nil)
+        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.new, context: nil)
         queue?.addOperation(operation)
         
         return true
         
     }
     
-    func getServiceKey(deviceUniqueId: String,
+    func getServiceKey(_ deviceUniqueId: String,
         withDelegate delegate: AuthMeServiceDelegate) -> Bool
     {
-        logger.log(.DEBUG, message: "GetServiceKey called for device \(deviceUniqueId)")
+        logger.log(.debug, message: "GetServiceKey called for device \(deviceUniqueId)")
         
         // Create the operation
         let url = getServiceEntryURL("GetServiceKey") + "?deviceId=\(deviceUniqueId)"
@@ -169,22 +169,22 @@ class AuthMeService : NSObject {
             return false
         }
         
-        let operation = AuthMeServiceOperation(url: url)
+        let operation = AuthMeServiceOperation(url: url as NSString)
         operation.delegate = delegate
         operation.postData = nil
         operation.opaqueData = nil
-        operation.operationType = .GetServiceKey
+        operation.operationType = .getServiceKey
         operation.secureRequest = true
         
-        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.New, context: nil)
+        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.new, context: nil)
         queue?.addOperation(operation)
         
         return true
     }
     
-    func getAuthChecks(delegate: AuthMeServiceDelegate) -> Bool {
+    func getAuthChecks(_ delegate: AuthMeServiceDelegate) -> Bool {
         
-        logger.log(.DEBUG, message: "GetAuthChecks called")
+        logger.log(.debug, message: "GetAuthChecks called")
         
         // Create the operation
         let url = getServiceEntryURL("AuthCheck")
@@ -192,69 +192,69 @@ class AuthMeService : NSObject {
             return false
         }
         
-        let operation = AuthMeServiceOperation(url: url)
+        let operation = AuthMeServiceOperation(url: url as NSString)
         operation.delegate = delegate
         operation.postData = nil
         operation.opaqueData = nil
-        operation.operationType = .GetAuthChecks
+        operation.operationType = .getAuthChecks
         operation.secureRequest = true
         
-        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.New, context: nil)
+        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.new, context: nil)
         queue?.addOperation(operation)
         
         return true
         
     }
     
-    func getSignatureSeed(delegate: AuthMeServiceDelegate, withOpaqueData opaqueData: AnyObject?) -> Bool {
+    func getSignatureSeed(_ delegate: AuthMeServiceDelegate, withOpaqueData opaqueData: AnyObject?) -> Bool {
         
-        logger.log(.DEBUG, message: "GetSignatureSeed called")
+        logger.log(.debug, message: "GetSignatureSeed called")
         
         // Create the operation
         let url = getServiceEntryURL("SignatureSeed")
         
-        let operation = AuthMeServiceOperation(url: url)
+        let operation = AuthMeServiceOperation(url: url as NSString)
         operation.delegate = delegate
         operation.postData = nil
         operation.opaqueData = opaqueData
-        operation.operationType = .GetSignatureSeed
+        operation.operationType = .getSignatureSeed
         operation.secureRequest = true
         
-        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.New, context: nil)
+        operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.new, context: nil)
         queue?.addOperation(operation)
         
         return true
     }
     
-    func setAuthCheckStatus(svcSession: SvcSession, withStatus status: String, withSignature signature:AuthMeSign, withUnwrappedSecret unwrappedSecret: String, delegate: AuthMeServiceDelegate) -> Bool {
+    func setAuthCheckStatus(_ svcSession: SvcSession, withStatus status: String, withSignature signature:AuthMeSign, withUnwrappedSecret unwrappedSecret: String, delegate: AuthMeServiceDelegate) -> Bool {
         
-        logger.log(.DEBUG, message: "setAuthCheckStatus called")
+        logger.log(.debug, message: "setAuthCheckStatus called")
         // Create the operation
         let url = getServiceEntryURL("AuthCheck")
         if url == "" {
             return false
         }
         
-        let operation = AuthMeServiceOperation(url: url)
+        let operation = AuthMeServiceOperation(url: url as NSString)
         // Create the POST data
         
         // First a signature
         let sig = NSMutableDictionary(
             objects: [signature.sigId, signature.dateTime, signature.signature],
-            forKeys: ["sigId", "dateTime", "value"])
+            forKeys: ["sigId" as NSCopying, "dateTime" as NSCopying, "value" as NSCopying])
         
         let params = NSMutableDictionary(
             objects: [svcSession.checkId, status, unwrappedSecret, sig],
-            forKeys: ["checkId","status","unwrappedSecret","signature"])
+            forKeys: ["checkId" as NSCopying,"status" as NSCopying,"unwrappedSecret" as NSCopying,"signature" as NSCopying])
         
-        if let postData = try? NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions(rawValue: 0)) {
+        if let postData = try? JSONSerialization.data(withJSONObject: params, options: JSONSerialization.WritingOptions(rawValue: 0)) {
             operation.delegate = delegate
             operation.postData = postData
             operation.opaqueData = nil
-            operation.operationType = .SetAuthCheckStatus
+            operation.operationType = .setAuthCheckStatus
             operation.secureRequest = true
             
-            operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.New, context: nil)
+            operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.new, context: nil)
             queue?.addOperation(operation)
             
             return true
@@ -263,7 +263,7 @@ class AuthMeService : NSObject {
 
     }
     
-    func setServiceKey(deviceId: String,
+    func setServiceKey(_ deviceId: String,
         encryptedKeyValue: String,
         keyKCV: String,
         encryptedPrivateKey: String,
@@ -272,7 +272,7 @@ class AuthMeService : NSObject {
         signature: AuthMeSign,
         delegate: AuthMeServiceDelegate) -> Bool {
             
-        logger.log(.DEBUG, message: "setServiceKey called")
+        logger.log(.debug, message: "setServiceKey called")
             
         // Create the operation
         let url = getServiceEntryURL("SetServiceKey")
@@ -280,13 +280,13 @@ class AuthMeService : NSObject {
             return false
         }
         
-        let operation = AuthMeServiceOperation(url: url)
+        let operation = AuthMeServiceOperation(url: url as NSString)
         // Create the POST data
         
         // First a signature
         let sig = NSMutableDictionary(
             objects: [signature.sigId, signature.dateTime, signature.signature],
-            forKeys: ["sigId", "dateTime", "value"])
+            forKeys: ["sigId" as NSCopying, "dateTime" as NSCopying, "value" as NSCopying])
         
         let params = NSMutableDictionary(
             objects: [deviceId,
@@ -296,23 +296,23 @@ class AuthMeService : NSObject {
                 privateKVC,
                 publicKey,
                 sig],
-            forKeys: ["deviceId",
-                "encryptedKeyValue",
-                "keyKCV",
-                "encryptedPrivateKey",
-                "privateKCV",
-                "publicKey",
-                "signature"
+            forKeys: ["deviceId" as NSCopying,
+                "encryptedKeyValue" as NSCopying,
+                "keyKCV" as NSCopying,
+                "encryptedPrivateKey" as NSCopying,
+                "privateKCV" as NSCopying,
+                "publicKey" as NSCopying,
+                "signature" as NSCopying
             ])
         
-        if let postData = try? NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions(rawValue: 0)) {
+        if let postData = try? JSONSerialization.data(withJSONObject: params, options: JSONSerialization.WritingOptions(rawValue: 0)) {
             operation.delegate = delegate
             operation.postData = postData
             operation.opaqueData = nil
-            operation.operationType = .SetServiceKey
+            operation.operationType = .setServiceKey
             operation.secureRequest = true
             
-            operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.New, context: nil)
+            operation.addObserver(self, forKeyPath: "isFinished", options: NSKeyValueObservingOptions.new, context: nil)
             queue?.addOperation(operation)
             
             return true
@@ -323,7 +323,7 @@ class AuthMeService : NSObject {
 
     
     // MARK: URL Handling
-    func getServiceEntryURL(entryPoint: String) -> String {
+    func getServiceEntryURL(_ entryPoint: String) -> String {
         
         var base : String? = nil
 
@@ -337,9 +337,9 @@ class AuthMeService : NSObject {
         if base == nil {
         
             #if DEBUG
-                base = servicePlist.valueForKey("BaseURLDebug") as? String
+                base = servicePlist.value(forKey: "BaseURLDebug") as? String
             #else
-                base = servicePlist.valueForKey("BaseURL") as? String
+                base = servicePlist.value(forKey: "BaseURL") as? String
             #endif
         
             if base == nil {
@@ -349,8 +349,8 @@ class AuthMeService : NSObject {
         
         // Now find the appropriate relative URL for the entry point
         var relativeURL = ""
-        if let entryPointsDict = servicePlist.valueForKey("EntryPoints") as? NSDictionary {
-            if let relURL = entryPointsDict.valueForKey(entryPoint) as? String {
+        if let entryPointsDict = servicePlist.value(forKey: "EntryPoints") as? NSDictionary {
+            if let relURL = entryPointsDict.value(forKey: entryPoint) as? String {
                 relativeURL = relURL
             }
         }
@@ -368,17 +368,17 @@ class AuthMeService : NSObject {
     
     // MARK: Service Delegate Functions
     
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
-        logger.log(.DEBUG, message: "Observed a service finish!")
+        logger.log(.debug, message: "Observed a service finish!")
         
         let operation = object as! AuthMeServiceOperation
         
         if operation.error != nil {
-            logger.log(.WARN, message: "Got an error: \(operation.error?.description)")
+            logger.log(.warn, message: "Got an error: \(operation.error?.description)")
         }
         else {
-            logger.log(.DEBUG, message: "URL : \(operation.url) worked")
+            logger.log(.debug, message: "URL : \(operation.url) worked")
         }
         
         if operation.delegate != nil {
@@ -395,7 +395,7 @@ class AuthMeService : NSObject {
             return _servicePlist!
         }
         
-        if let servicePath = NSBundle.mainBundle().pathForResource(servicePlistFile, ofType: "plist") {
+        if let servicePath = Bundle.main.path(forResource: servicePlistFile, ofType: "plist") {
             _servicePlist = NSDictionary(contentsOfFile: servicePath)
         }
         else {

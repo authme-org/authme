@@ -27,18 +27,18 @@ import Foundation
 
 /* Simple class to handle logging for us */
 
-var currentLoggingLevel = Log.Level.INFO
+var currentLoggingLevel = Log.Level.info
 
 class Log {
     
     enum Level: Int {
-        case FINEST = 0
-        case FINE
-        case DEBUG
-        case INFO
-        case WARN
-        case ERROR
-        case DIE
+        case finest = 0
+        case fine
+        case debug
+        case info
+        case warn
+        case error
+        case die
     }
     
     var LevelStrings = ["FINEST", "FINE", "DEBUG", "INFO", "WARN", "ERROR", "DIE"]
@@ -48,9 +48,9 @@ class Log {
     init(filename: String = #file) {
         
         /* First strip the filename */
-        if let fileRange = filename.rangeOfString("/", options: NSStringCompareOptions.BackwardsSearch, range: nil, locale: nil) {
+        if let fileRange = filename.range(of: "/", options: NSString.CompareOptions.backwards, range: nil, locale: nil) {
             if !fileRange.isEmpty {
-                self.filename = filename.substringFromIndex(fileRange.endIndex)
+                self.filename = filename.substring(from: fileRange.upperBound)
             }
             else {
                 self.filename = filename
@@ -61,7 +61,7 @@ class Log {
         }
     }
     
-    func log(level: Level,
+    func log(_ level: Level,
         message: String,
         function: String = #function,
         line: Int = #line) {
@@ -70,9 +70,9 @@ class Log {
             
                 /* If we are going to log - do it only on the main thread */
                 
-                if !NSThread.isMainThread() {
+                if !Thread.isMainThread {
                     
-                    dispatch_async(dispatch_get_main_queue(), {
+                    DispatchQueue.main.async(execute: {
                         
                         self.log(level, message: message, function: function, line: line)
                         
@@ -86,7 +86,7 @@ class Log {
     }
     
     // TODO: Make this threadsafe - but this'll do for now as we only call once
-    class func setLogLevel(level: Level) {
+    class func setLogLevel(_ level: Level) {
         currentLoggingLevel = level
     }
     

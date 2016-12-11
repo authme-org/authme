@@ -58,7 +58,7 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
             return
         }
         
-        logger.log(.DEBUG, message: "Starting init of authme service")
+        logger.log(.debug, message: "Starting init of authme service")
         
         /* First destroy any existing service configuration */
         masterPassword.serviceDeactivated()
@@ -76,25 +76,25 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
     
     func getDevice() {
         
-        let date = NSDate()
-        let df = NSDateFormatter()
+        let date = Date()
+        let df = DateFormatter()
         df.dateFormat = "dd/MM/yyyy-hh:mm:ssa"
-        let nonce = df.stringFromDate(date)
+        let nonce = df.string(from: date)
         
         // Call the getDevice web service.  This will encrypt the nonce using the public key
-        authme.getDevice(masterPassword.getUniqueDeviceId(), withNonce: nonce, withOpaqueData: nonce, withDelegate: self)
+        authme.getDevice(masterPassword.getUniqueDeviceId(), withNonce: nonce, withOpaqueData: nonce as AnyObject?, withDelegate: self)
         
         return;
     }
     
-    func checkDevice(json: NSDictionary, withNonce nonce: String) {
-        logger.log(.DEBUG, message: "Validating device")
+    func checkDevice(_ json: NSDictionary, withNonce nonce: String) {
+        logger.log(.debug, message: "Validating device")
         
-        if let encryptedData = json.objectForKey("encryptedData") as? NSString {
+        if let encryptedData = json.object(forKey: "encryptedData") as? NSString {
             if let decrypt = masterPassword.deviceRSAKey?.decrypt(encryptedData as String) {
-                if let decryptString = NSString(data: decrypt, encoding: NSUTF8StringEncoding) {
-                    if decryptString == nonce {
-                        logger.log(.DEBUG, message: "Decrypt of nonce OK")
+                if let decryptString = NSString(data: decrypt, encoding: String.Encoding.utf8.rawValue) {
+                    if decryptString as String == nonce {
+                        logger.log(.debug, message: "Decrypt of nonce OK")
                         authme.getServiceKey(masterPassword.getUniqueDeviceId(), withDelegate: self)
                         return;
                     }
@@ -102,11 +102,11 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
             }
         }
         
-        logger.log(.DEBUG, message: "device validation failed")
+        logger.log(.debug, message: "device validation failed")
     }
     
     func uploadServiceKey() {
-        logger.log(.DEBUG, message: "Sending service key to service");
+        logger.log(.debug, message: "Sending service key to service");
         
         /* First have to sign it */
         let signature = AuthMeSign()
@@ -118,55 +118,55 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
         
         /* Generate RSA key */
         
-        logger.log(.DEBUG, message:"rsaGEnThreadMain now generating keys")
+        logger.log(.debug, message:"rsaGEnThreadMain now generating keys")
         
         serviceRSAKey = RSAKey(identifier: _AUTHME_SERVICE_RSA_KEY_TAG)
-        if !serviceRSAKey!.generateKey(masterPassword._AUTHME_RSA_KEY_LENGTH * 8) {
-            logger.log(.WARN, message: "Error generating RSA key")
+        if !serviceRSAKey!.generate(masterPassword._AUTHME_RSA_KEY_LENGTH * 8) {
+            logger.log(.warn, message: "Error generating RSA key")
             return
         }
         
-        logger.log(.DEBUG, message: "RSA Service key generated")
+        logger.log(.debug, message: "RSA Service key generated")
         
         serviceAESKey = AESKey()
         if !serviceAESKey!.generateKey() {
-            logger.log(.WARN, message: "Error generating AES key")
+            logger.log(.warn, message: "Error generating AES key")
         }
         
         /* Now we encrypt the private key using the newly generated AES key */
         let rsaPrivateAsString = serviceRSAKey!.getPKCS8PrivateKey()
-        let rsaPrivateAsData = NSData(base64EncodedString: rsaPrivateAsString, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+        let rsaPrivateAsData = Data(base64Encoded: rsaPrivateAsString!, options: NSData.Base64DecodingOptions.ignoreUnknownCharacters)
         serviceRSAKey!.calculateKCV(rsaPrivateAsData)
 
         serviceRSAKCV = serviceRSAKey!.getKCV()
         serviceAESKCV = serviceAESKey!.getKCV()
         
-        encryptedServicePrivateKey = serviceAESKey!.encrypt(rsaPrivateAsData, plainLength: rsaPrivateAsData!.length)
+        encryptedServicePrivateKey = serviceAESKey!.encrypt(rsaPrivateAsData, plainLength: rsaPrivateAsData!.count)
         
         /* Then the AES key under the device key */
-        let aesKeyAsData = serviceAESKey!.getKeyAsData()
-        encryptedServiceAESKey = masterPassword.deviceRSAKey!.encrypt(aesKeyAsData, plainLength: aesKeyAsData.length)
+        let aesKeyAsData = serviceAESKey!.getAsData()
+        encryptedServiceAESKey = masterPassword.deviceRSAKey!.encrypt(aesKeyAsData, plainLength: (aesKeyAsData?.count)!)
         
-        logger.log(.DEBUG, message: "createServiceKeyWorker finalising");
+        logger.log(.debug, message: "createServiceKeyWorker finalising");
         
-        dispatch_async(dispatch_get_main_queue(), {self.uploadServiceKey()} )
+        DispatchQueue.main.async(execute: {self.uploadServiceKey()} )
 
     }
     
-    func loadServiceKey(json: NSDictionary) {
+    func loadServiceKey(_ json: NSDictionary) {
         
-        if let keyStatus = json.objectForKey("keyStatus") as? NSString {
+        if let keyStatus = json.object(forKey: "keyStatus") as? NSString {
             if keyStatus == "Available" {
-                logger.log(.DEBUG, message: "Service Key available")
-                if let encryptedKeyValue = json.objectForKey("encryptedKeyValue") as? NSString {
+                logger.log(.debug, message: "Service Key available")
+                if let encryptedKeyValue = json.object(forKey: "encryptedKeyValue") as? NSString {
                     
-                    let keyKCV = json.objectForKey("keyKCV") as? NSString
+                    let keyKCV = json.object(forKey: "keyKCV") as? NSString
                     
                     // Decrypt...
                     if let serviceKeyRaw = masterPassword.deviceRSAKey?.decrypt(encryptedKeyValue as String) {
                         let serviceKey = AESKey()
                         if serviceKey.loadKey(serviceKeyRaw) && serviceKey.checkKCV(keyKCV as! String) {
-                            logger.log(.DEBUG, message: "ServiceKey loaded")
+                            logger.log(.debug, message: "ServiceKey loaded")
                             masterPassword.serviceKey = serviceKey
                             loadServiceKeyPair(json)
                             return;
@@ -176,33 +176,33 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
             }
             
             else if keyStatus == "None" {
-                logger.log(.DEBUG, message: "Service key not set - need to create one")
+                logger.log(.debug, message: "Service key not set - need to create one")
                 /* Start a background threat to generate new keys */
-                let createServiceWorkerThread = NSThread(target: self, selector: #selector(AuthMeServiceInitialiser.createServiceKeyWorker), object: nil)
+                let createServiceWorkerThread = Thread(target: self, selector: #selector(AuthMeServiceInitialiser.createServiceKeyWorker), object: nil)
                 createServiceWorkerThread.start()
                 return
             }
         }
         
-        logger.log(.DEBUG, message: "Load of service key failed")
+        logger.log(.debug, message: "Load of service key failed")
         
     }
     
-    func loadServiceKeyPair(json: NSDictionary) {
+    func loadServiceKeyPair(_ json: NSDictionary) {
         
-        if let encryptedPrivateKey = json.objectForKey("encryptedPrivateKey") as? NSString {
-            if let publicKey = json.objectForKey("publicKey") as? NSString {
-                let privateKCV = json.objectForKey("privateKCV") as? NSString
+        if let encryptedPrivateKey = json.object(forKey: "encryptedPrivateKey") as? NSString {
+            if let publicKey = json.object(forKey: "publicKey") as? NSString {
+                let privateKCV = json.object(forKey: "privateKCV") as? NSString
                 
                 // Decrypt the private key
                 if let decryptedPrivateKey = masterPassword.serviceKey?.decrypt(encryptedPrivateKey as String, cipherLength: 0) {
                     let k = RSAKey(identifier: _AUTHME_SERVICE_RSA_KEY_TAG)
-                    if k.loadPKCS8PrivateKey(decryptedPrivateKey) &&
-                        k.compareKCV(privateKCV as! String)
+                    if (k?.loadPKCS8PrivateKey(decryptedPrivateKey as Data!))! &&
+                        (k?.compareKCV(privateKCV as! String))!
                     {
-                        if k.loadPublicKey(publicKey as String) {
+                        if (k?.loadPublicKey(publicKey as String))! {
                             masterPassword.serviceKeyPair = k
-                            logger.log(.DEBUG, message: "Service Key Pair loaded")
+                            logger.log(.debug, message: "Service Key Pair loaded")
                             masterPassword.serviceActivated()
                             return
                         }
@@ -212,67 +212,67 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
             }
         }
         
-        logger.log(.WARN, message: "Failed to load service key pair")
+        logger.log(.warn, message: "Failed to load service key pair")
         
     }
     
-    func stateMachine(operation: AuthMeServiceOperation) {
+    func stateMachine(_ operation: AuthMeServiceOperation) {
         
         // This basically works through each of the steps to initialise
         
         switch operation.operationType {
             
-        case .AddDevice:
-            logger.log(.DEBUG, message: "Add Device Returned")
+        case .addDevice:
+            logger.log(.debug, message: "Add Device Returned")
             if operation.statusCode == 200 || operation.statusCode == 201 {
                 // Good to continue
                 getDevice()
             }
             
-        case .GetDevice:
-            logger.log(.DEBUG, message: "Get Device Returned")
+        case .getDevice:
+            logger.log(.debug, message: "Get Device Returned")
             if operation.statusCode == 200 {
                 if let readData = operation.returnData {
-                    let json = (try! NSJSONSerialization.JSONObjectWithData(readData, options: NSJSONReadingOptions.MutableContainers)) as! NSDictionary
+                    let json = (try! JSONSerialization.jsonObject(with: readData as Data, options: JSONSerialization.ReadingOptions.mutableContainers)) as! NSDictionary
                     checkDevice(json, withNonce: operation.opaqueData as! String)
                 }
             }
             
-        case .GetServiceKey:
-            logger.log(.DEBUG, message: "Get Service Key Returned")
+        case .getServiceKey:
+            logger.log(.debug, message: "Get Service Key Returned")
             if operation.statusCode == 200 {
                 if let readData = operation.returnData {
-                    let json = (try! NSJSONSerialization.JSONObjectWithData(readData, options: NSJSONReadingOptions.MutableContainers)) as! NSDictionary
+                    let json = (try! JSONSerialization.jsonObject(with: readData as Data, options: JSONSerialization.ReadingOptions.mutableContainers)) as! NSDictionary
                     loadServiceKey(json)
                 }
             }
             
-        case .SetServiceKey:
-            logger.log(.DEBUG, message: "Set service key returned")
+        case .setServiceKey:
+            logger.log(.debug, message: "Set service key returned")
             if operation.statusCode == 201 {
-                logger.log(.DEBUG, message: "Service key created!")
+                logger.log(.debug, message: "Service key created!")
                 masterPassword.serviceKey = serviceAESKey
                 masterPassword.serviceKeyPair = serviceRSAKey
                 masterPassword.serviceActivated()
             }
             else {
-                logger.log(.WARN, message: "Set Service key failed - error \(operation.statusCode)")
+                logger.log(.warn, message: "Set Service key failed - error \(operation.statusCode)")
             }
             
         default:
-            logger.log(.ERROR, message: "Unknown service operation returned!")
+            logger.log(.error, message: "Unknown service operation returned!")
         }
     }
     
-    func service(service: AuthMeService, didCompletOperation operation: AuthMeServiceOperation, withOpaqueData opaqueData: AnyObject?) {
+    func service(_ service: AuthMeService, didCompletOperation operation: AuthMeServiceOperation, withOpaqueData opaqueData: AnyObject?) {
         
-        logger.log(.DEBUG, message: "Service return")
+        logger.log(.debug, message: "Service return")
         stateMachine(operation)
         
     }
     
-    func signerDidComplete(signer: AuthMeSign, didSucceed: Bool, withOpaqueData opaqueData: AnyObject?) {
-        logger.log(.DEBUG, message: "Signer returned")
+    func signerDidComplete(_ signer: AuthMeSign, didSucceed: Bool, withOpaqueData opaqueData: AnyObject?) {
+        logger.log(.debug, message: "Signer returned")
         
         authme.setServiceKey(masterPassword.getUniqueDeviceId(),
             encryptedKeyValue: encryptedServiceAESKey,

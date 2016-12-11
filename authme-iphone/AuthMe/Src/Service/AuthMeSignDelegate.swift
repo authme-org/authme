@@ -28,6 +28,6 @@ import Foundation
 
 protocol AuthMeSignDelegate {
     
-    func signerDidComplete(signer: AuthMeSign, didSucceed: Bool, withOpaqueData opaqueData: AnyObject?)
+    func signerDidComplete(_ signer: AuthMeSign, didSucceed: Bool, withOpaqueData opaqueData: AnyObject?)
     
 }

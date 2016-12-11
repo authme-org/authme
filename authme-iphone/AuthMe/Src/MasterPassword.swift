@@ -49,16 +49,16 @@ class MasterPassword : NSObject {
 
 
     enum PasswordState : Int {
-        case OPEN_STORE
-        case CREATE_PASS1
-        case CREATE_PASS2
+        case open_STORE
+        case create_PASS1
+        case create_PASS2
     }
     
     let logger = Log()
     var managedObjectContext: NSManagedObjectContext? = nil
     var cachedConfig: Configuration?
     
-    var passwordState = PasswordState.OPEN_STORE
+    var passwordState = PasswordState.open_STORE
     var passwordFirstPass = ""
     var storePassword = ""
     var useTouchID = false
@@ -77,41 +77,41 @@ class MasterPassword : NSObject {
     var authController: AuthListController? = nil
     
     override init() {
-        logger.log(.DEBUG, message: "Master Password initialising")
+        logger.log(.debug, message: "Master Password initialising")
     }
     
     // MARK: Startup loading
-    func requestStorePassword(prompt: String) {
+    func requestStorePassword(_ prompt: String) {
         
         // Use an alert dialog to get password
         let alert = UIAlertController(title: "Master Password",
-            message: prompt, preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {(UIAlertAction) in
+            message: prompt, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {(UIAlertAction) in
             self.passwordEntered((alert.textFields![0] as UITextField).text!)
         }))
         
-        alert.addTextFieldWithConfigurationHandler({(textField: UITextField) in
+        alert.addTextField(configurationHandler: {(textField: UITextField) in
             textField.placeholder = "Password"
         })
-        UIApplication.sharedApplication().keyWindow!.rootViewController!.presentViewController(alert, animated: true, completion: nil)
+        UIApplication.shared.keyWindow!.rootViewController!.present(alert, animated: true, completion: nil)
     }
     
     
     func startup() {
-        logger.log(.DEBUG, message: "Master password commencing load")
+        logger.log(.debug, message: "Master password commencing load")
         
         /* Open the master key data */
         
         // First load the Store Check Value so we can validate the password
-        let request = NSFetchRequest()
-        let entity = NSEntityDescription.entityForName("Configuration", inManagedObjectContext: managedObjectContext!)
+        let request = NSFetchRequest<NSFetchRequestResult>()
+        let entity = NSEntityDescription.entity(forEntityName: "Configuration", in: managedObjectContext!)
         request.entity = entity
         
         // Fetch
         var fetchResult : [AnyObject] = []
         
         do {
-            fetchResult = try managedObjectContext!.executeFetchRequest(request) as [AnyObject]!
+            fetchResult = try managedObjectContext!.fetch(request) as [AnyObject]!
         }
         catch _ {
         }
@@ -120,8 +120,8 @@ class MasterPassword : NSObject {
         if fetchResult.count == 0 {
             
             // Oh dear - need to create from scratch
-            logger.log(.INFO, message: "Creating default configuration")
-            cachedConfig = NSEntityDescription.insertNewObjectForEntityForName("Configuration", inManagedObjectContext: managedObjectContext!) as? Configuration
+            logger.log(.info, message: "Creating default configuration")
+            cachedConfig = NSEntityDescription.insertNewObject(forEntityName: "Configuration", into: managedObjectContext!) as? Configuration
             do {
                 try managedObjectContext?.save()
             } catch _ {
@@ -136,12 +136,12 @@ class MasterPassword : NSObject {
         
         // Find out if we have a TouchID that we want to enable
         let context = LAContext()
-        let haveTouchId = context.canEvaluatePolicy(LAPolicy.DeviceOwnerAuthenticationWithBiometrics, error: nil)
+        let haveTouchId = context.canEvaluatePolicy(LAPolicy.deviceOwnerAuthenticationWithBiometrics, error: nil)
         
         // Now load the password
         if (cachedConfig!.checkString != nil) {
-            passwordState = .OPEN_STORE
-            if haveTouchId && (cachedConfig!.useTouchID == NSNumber(int: 1)) {
+            passwordState = .open_STORE
+            if haveTouchId && (cachedConfig!.useTouchID == NSNumber(value: 1 as Int32)) {
                 requestTouchIDPassword()
             }
             else {
@@ -149,7 +149,7 @@ class MasterPassword : NSObject {
             }
         }
         else {
-            passwordState = .CREATE_PASS1
+            passwordState = .create_PASS1
             if haveTouchId {
                 requestTouchIDSetup()
             }
@@ -165,18 +165,18 @@ class MasterPassword : NSObject {
         // Use an alert dialog to ask the user whether to use TouchID
         let alert = UIAlertController(title: "Use Touch ID?",
             message: "Touch ID is active on this device.  Do you wish to use your fingerprint to secure this app?\n\nNOTE: You will still enter a password that can also be used in an emergency.",
-            preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default, handler: {(UIAlertAction) in
+            preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: {(UIAlertAction) in
 
             self.useTouchID = true
             self.requestStorePassword("Initialise Store - Enter Password")
         }))
 
-        alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: {(UIAlertAction) in
+        alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.cancel, handler: {(UIAlertAction) in
             self.requestStorePassword("Initialise Store - Enter Password")
         }))
 
-        UIApplication.sharedApplication().keyWindow!.rootViewController!.presentViewController(alert, animated: true, completion: nil)
+        UIApplication.shared.keyWindow!.rootViewController!.present(alert, animated: true, completion: nil)
         
     }
     
@@ -184,9 +184,9 @@ class MasterPassword : NSObject {
         
         let keyChainStore = KeyChainPassword(identifier: _AUTHME_DEVICE_PASSWORD_TAG)
         
-        keyChainStore.setPassword(storePassword)
-        if !keyChainStore.storeKey() {
-            logger.log(.WARN, message: "Error storing password to keychain")
+        keyChainStore?.setPassword(storePassword)
+        if !(keyChainStore?.storeKey())! {
+            logger.log(.warn, message: "Error storing password to keychain")
             useTouchID = false
         }
     }
@@ -194,9 +194,9 @@ class MasterPassword : NSObject {
     func requestTouchIDPassword() {
         
         let keyChainStore = KeyChainPassword(identifier: _AUTHME_DEVICE_PASSWORD_TAG)
-        if keyChainStore.loadKey() {
-            storePassword = keyChainStore.getPassword()
-            logger.log(.DEBUG, message: "Got Key: \(storePassword)")
+        if (keyChainStore?.loadKey())! {
+            storePassword = (keyChainStore?.getPassword())!
+            logger.log(.debug, message: "Got Key: \(storePassword)")
             
             if !checkStore() {
                 // We failed to get the correct password!
@@ -211,41 +211,41 @@ class MasterPassword : NSObject {
             startInit()
         }
         else {
-            logger.log(.WARN, message: "Error loading password from Touch ID")
+            logger.log(.warn, message: "Error loading password from Touch ID")
             requestStorePassword("Open Store - Enter Password")
         }
     }
     
-    func passwordEntered(password: String) {
+    func passwordEntered(_ password: String) {
         
-        logger.log(.FINEST, message: "Password = \(password)")
+        logger.log(.finest, message: "Password = \(password)")
         
         // First of all - did someone type "RESET!" to get this to reset?
         if password == "RESET!" {
-            logger.log(.DEBUG, message: "User requested database reset")
+            logger.log(.debug, message: "User requested database reset")
             if let persistentStoreCoordinator = managedObjectContext?.persistentStoreCoordinator {
                 
                 // Do the shut down of the store
                 var errorCode : NSError?
                 if let store = persistentStoreCoordinator.persistentStores.last as NSPersistentStore? {
                     do {
-                        try persistentStoreCoordinator.removePersistentStore(store)
-                        logger.log(.DEBUG, message: "Store removed OK")
+                        try persistentStoreCoordinator.remove(store)
+                        logger.log(.debug, message: "Store removed OK")
                     } catch let error as NSError {
                         errorCode = error
-                        logger.log(.DEBUG, message: "Store removal Error: \(errorCode), \(errorCode?.userInfo)");
+                        logger.log(.debug, message: "Store removal Error: \(errorCode), \(errorCode?.userInfo)");
                     }
             
                     // Now delete the file
                     // FIXME: dirty. If there are many stores...
                     // Delete file
-                    if NSFileManager.defaultManager().fileExistsAtPath(store.URL!.path!) {
+                    if FileManager.default.fileExists(atPath: store.url!.path) {
                         do {
-                            try NSFileManager.defaultManager().removeItemAtPath(store.URL!.path!)
-                            logger.log(.DEBUG, message:"Unresolved error \(errorCode), \(errorCode?.userInfo)")
+                            try FileManager.default.removeItem(atPath: store.url!.path)
+                            logger.log(.debug, message:"Unresolved error \(errorCode), \(errorCode?.userInfo)")
                         } catch let error as NSError {
                             errorCode = error
-                            logger.log(.DEBUG, message: "Store file deleted OK")
+                            logger.log(.debug, message: "Store file deleted OK")
                         }
                     }
                 }
@@ -258,26 +258,26 @@ class MasterPassword : NSObject {
         // Is this first entry or later?
         switch passwordState {
 
-        case .CREATE_PASS1:
+        case .create_PASS1:
 
             passwordFirstPass = password
                 
             // Now load password screen again
             requestStorePassword("Initialise Store - Repeat Password")
-            passwordState = .CREATE_PASS2
+            passwordState = .create_PASS2
             
             return
             
-        case .CREATE_PASS2:
+        case .create_PASS2:
         
             // This is second time entered - check and done!
             if passwordFirstPass == password {
 
                 storePassword = password
-                logger.log(.DEBUG, message: "Initial entry of password succeeded")
+                logger.log(.debug, message: "Initial entry of password succeeded")
                 
                 if useTouchID {
-                    logger.log(.DEBUG, message: "Storing password to keychain")
+                    logger.log(.debug, message: "Storing password to keychain")
                     storePasswordToTouchID()
                 }
                     
@@ -288,15 +288,15 @@ class MasterPassword : NSObject {
                 
             }
             else {
-                logger.log(.DEBUG, message: "Initial entry of password failed")
+                logger.log(.debug, message: "Initial entry of password failed")
                 passwordFirstPass = ""
-                passwordState = .CREATE_PASS1
+                passwordState = .create_PASS1
                 requestStorePassword("Initialise Mismatch - Enter Password")
                 
                 return
             }
             
-        case .OPEN_STORE:
+        case .open_STORE:
             
             storePassword = password
             
@@ -325,74 +325,74 @@ class MasterPassword : NSObject {
          * main thread to close the alert window
         */
     
-        logger.log(.DEBUG, message:"rsaGEnThreadMain now generating keys")
+        logger.log(.debug, message:"rsaGEnThreadMain now generating keys")
     
         if deviceRSAKey != nil {
-            deviceRSAKey!.destroyKey(true)
+            deviceRSAKey!.destroy(true)
             deviceRSAKey = nil;
         }
     
         deviceRSAKey = RSAKey(identifier: _AUTHME_DEVICE_RSA_KEY_TAG)
-        if !deviceRSAKey!.generateKey(_AUTHME_RSA_KEY_LENGTH * 8) {
-            logger.log(.WARN, message: "Error generating RSA key");
+        if !deviceRSAKey!.generate(_AUTHME_RSA_KEY_LENGTH * 8) {
+            logger.log(.warn, message: "Error generating RSA key");
             return;
         }
     
-        logger.log(.DEBUG, message: "ceateStoreWorker creating configuration");
+        logger.log(.debug, message: "ceateStoreWorker creating configuration");
         
         /* Create the AES wrapper using the password */
         let pwKey = AESKey()
-        pwKey.setKeyFromPassword(storePassword, withSalt: NSData(bytes: masterPasswordSalt, length: 8), ofLength: 8)
+        pwKey.setKeyFromPassword(storePassword, withSalt: Data(bytes: UnsafePointer<UInt8>(masterPasswordSalt), count: 8), ofLength: 8)
         
         /* Create the store key */
         storeKey = AESKey()
         if !storeKey!.generateKey() {
-            logger.log(.WARN, message: "Error generating store key")
+            logger.log(.warn, message: "Error generating store key")
             return
         }
         
         /* Encrypt the check value, RSA Key pair and the store key to save */
-        let encodedCheckValue = storeKey!.encrypt(NSData(bytes: configCheckArray, length: 3), plainLength: 3)
-        let rawStoreKey = NSData(bytes: storeKey!.key, length: 32)
+        let encodedCheckValue = storeKey!.encrypt(Data(bytes: UnsafePointer<UInt8>(configCheckArray), count: 3), plainLength: 3)
+        let rawStoreKey = Data(bytes: UnsafePointer<UInt8>(storeKey!.key), count: 32)
         let encryptedStoreKey = pwKey.encrypt(rawStoreKey, plainLength: 32)
         let rawPublicKey = deviceRSAKey?.getPublicKey()
         let rawPrivateKey = deviceRSAKey?.getPrivateKey()
         let encryptedPrivateKey = storeKey!.encrypt(rawPrivateKey)
-        let checkStringRSA = deviceRSAKey?.encrypt(NSData(bytes: configCheckArray, length: 3), plainLength: 3)
+        let checkStringRSA = deviceRSAKey?.encrypt(Data(bytes: UnsafePointer<UInt8>(configCheckArray), count: 3), plainLength: 3)
         
         // Take the encoded result and store
     
         cachedConfig!.checkString = encodedCheckValue
-        cachedConfig!.nextId = NSNumber(int: 1)
+        cachedConfig!.nextId = NSNumber(value: 1 as Int32)
         cachedConfig!.storeKey = encryptedStoreKey
         cachedConfig!.deviceKeyPrivate = encryptedPrivateKey
         cachedConfig!.deviceKeyPublic = rawPublicKey
         cachedConfig!.checkStringRSA = checkStringRSA
-        cachedConfig!.useTouchID = NSNumber(int: useTouchID ? 1 : 0)
-        cachedConfig!.deviceUUID = UIDevice.currentDevice().identifierForVendor!.UUIDString
+        cachedConfig!.useTouchID = NSNumber(value: useTouchID ? 1 : 0 as Int32)
+        cachedConfig!.deviceUUID = UIDevice.current.identifierForVendor!.uuidString
     
         do {
             try managedObjectContext!.save()
         } catch _ {
             
-            logger.log(.ERROR, message:"Problem saving the configuration")
+            logger.log(.error, message:"Problem saving the configuration")
             abort();
         }
     
-        logger.log(.DEBUG, message: "createStoreWorker finalising");
+        logger.log(.debug, message: "createStoreWorker finalising");
         
-        UIApplication.sharedApplication().keyWindow!.rootViewController!.dismissViewControllerAnimated(true, completion: nil)
+        UIApplication.shared.keyWindow!.rootViewController!.dismiss(animated: true, completion: nil)
         
-        dispatch_async(dispatch_get_main_queue(), {self.startInit()} )
+        DispatchQueue.main.async(execute: {self.startInit()} )
         
     }
     
     func startInit() {
         
         // Only get here if things are OK
-        let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound, .Badge], categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(settings)        
-        UIApplication.sharedApplication().registerForRemoteNotifications()
+        let settings = UIUserNotificationSettings(types: [.alert, .sound, .badge], categories: nil)
+        UIApplication.shared.registerUserNotificationSettings(settings)        
+        UIApplication.shared.registerForRemoteNotifications()
 
         let initialiser = AuthMeServiceInitialiser()
         initialiser.doInit()
@@ -406,21 +406,21 @@ class MasterPassword : NSObject {
     
         //[self performSelector:@selector(createStoreWorker) withObject:nil afterDelay:.5];
     
-        logger.log(.DEBUG, message: "Starting RSA")
+        logger.log(.debug, message: "Starting RSA")
         RSAGenAlert = UIAlertController(title: "Generating Key",
-            message: "Generating RSA Key\nPlease wait...", preferredStyle: UIAlertControllerStyle.Alert)
+            message: "Generating RSA Key\nPlease wait...", preferredStyle: UIAlertControllerStyle.alert)
 
         let alertFrame = RSAGenAlert!.view.frame
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.WhiteLarge)
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
         
-        activityIndicator.frame = CGRectMake(125,alertFrame.size.height+115, 30,30);
-        activityIndicator.hidden = false;
-        activityIndicator.contentMode = UIViewContentMode.Center
+        activityIndicator.frame = CGRect(x: 125,y: alertFrame.size.height+115, width: 30,height: 30);
+        activityIndicator.isHidden = false;
+        activityIndicator.contentMode = UIViewContentMode.center
         activityIndicator.startAnimating()
         RSAGenAlert!.view.addSubview(activityIndicator)
-        UIApplication.sharedApplication().keyWindow!.rootViewController!.presentViewController(RSAGenAlert!, animated: true, completion: nil)
+        UIApplication.shared.keyWindow!.rootViewController!.present(RSAGenAlert!, animated: true, completion: nil)
         
-        let createStoreWorkerThread = NSThread(target: self, selector: #selector(MasterPassword.createStoreWorker), object: nil)
+        let createStoreWorkerThread = Thread(target: self, selector: #selector(MasterPassword.createStoreWorker), object: nil)
         createStoreWorkerThread.start()
     }
     
@@ -428,17 +428,17 @@ class MasterPassword : NSObject {
         
         /* Know we have all the basic store values - need to validate them using the entered password */
         let pwKey = AESKey()
-        pwKey.setKeyFromPassword(storePassword, withSalt: NSData(bytes: masterPasswordSalt, length: 8), ofLength: 8)
+        pwKey.setKeyFromPassword(storePassword, withSalt: Data(bytes: UnsafePointer<UInt8>(masterPasswordSalt), count: 8), ofLength: 8)
 
         /* Can we load the store key? */
         if let decryptedStoreKey = pwKey.decrypt(cachedConfig!.storeKey!, cipherLength: 0) {
             // Decrypt worked for store Key
             storeKey = AESKey()
-            if storeKey!.loadKey(decryptedStoreKey) {
+            if storeKey!.loadKey(decryptedStoreKey as Data!) {
                 // Key loaded OK - check the check value
                 if let decryptedCheckValue = storeKey?.decrypt(cachedConfig!.checkString!, cipherLength: 0) {
                     var good = true
-                    let checkBytes = UnsafePointer<UInt8>(decryptedCheckValue.bytes)
+                    let checkBytes = decryptedCheckValue.bytes.bindMemory(to: UInt8.self, capacity: decryptedCheckValue.length)
                     for i in 0..<configCheckArray.count {
                         if configCheckArray[i] != checkBytes[i] {
                             good = false
@@ -446,10 +446,10 @@ class MasterPassword : NSObject {
                     }
                     if good {
                         // Load the RSA Key
-                        logger.log(.DEBUG, message:"Loading RSA ley")
+                        logger.log(.debug, message:"Loading RSA ley")
                         
                         if deviceRSAKey != nil {
-                            deviceRSAKey!.destroyKey(true)
+                            deviceRSAKey!.destroy(true)
                             deviceRSAKey = nil;
                         }
                         
@@ -460,7 +460,7 @@ class MasterPassword : NSObject {
                         
                         if deviceRSAKey!.loadKeysFromKeychain() {
                             // Want to make sure this *NEVER* happens
-                            logger.log(.ERROR, message: "Error KEY FOUND IN KEY CHAIN");
+                            logger.log(.error, message: "Error KEY FOUND IN KEY CHAIN");
                             abort();
                             //return false
                         }
@@ -469,17 +469,17 @@ class MasterPassword : NSObject {
                         // encrypt/decrypt to see it works
                         good = false
                         if let decryptedPrivateKey = storeKey?.decrypt(cachedConfig!.deviceKeyPrivate!, cipherLength: 0) {
-                            if deviceRSAKey!.loadPrivateKey(NSString(data: decryptedPrivateKey, encoding: NSUTF8StringEncoding) as! String) {
+                            if deviceRSAKey!.loadPrivateKey(NSString(data: decryptedPrivateKey as Data, encoding: String.Encoding.utf8.rawValue) as! String) {
                                 if deviceRSAKey!.loadPublicKey(cachedConfig!.deviceKeyPublic) {
-                                    logger.log(.DEBUG, message: "RSA Key loaded")
+                                    logger.log(.debug, message: "RSA Key loaded")
                                     
                                     // Quick internal tests
                                     if let decRSACheck = deviceRSAKey?.decrypt(cachedConfig!.checkStringRSA) {
-                                        let decRSACheckBytes = UnsafePointer<UInt8>(decRSACheck.bytes)
+                                        let decRSACheckBytes = (decRSACheck as NSData).bytes.bindMemory(to: UInt8.self, capacity: decRSACheck.count)
 
-                                        let encTest = deviceRSAKey?.encrypt(NSData(bytes: configCheckArray, length: 3), plainLength: 3)
+                                        let encTest = deviceRSAKey?.encrypt(Data(bytes: UnsafePointer<UInt8>(configCheckArray), count: 3), plainLength: 3)
                                         if let decTest = deviceRSAKey?.decrypt(encTest) {
-                                            let decTestBytes = UnsafePointer<UInt8>(decTest.bytes)
+                                            let decTestBytes = (decTest as NSData).bytes.bindMemory(to: UInt8.self, capacity: decTest.count)
                                             good = true
                                             for i in 0..<configCheckArray.count {
                                                 if (configCheckArray[i] != checkBytes[i]) ||
@@ -500,10 +500,10 @@ class MasterPassword : NSObject {
                         }
                         
                         if !good {
-                            logger.log(.DEBUG, message: "RSA Test failed")
+                            logger.log(.debug, message: "RSA Test failed")
                         }
                         else {
-                            logger.log(.DEBUG, message: "All RSA tests passed")
+                            logger.log(.debug, message: "All RSA tests passed")
                             return true
                         }
                     }
@@ -526,7 +526,7 @@ class MasterPassword : NSObject {
     * bytes (5+LEN+16) - (END) is the secret we are actually unwrapping encrypted with teh AES key
     */
 
-    func unwrapSecret(wrappedSecret: String) -> String? {
+    func unwrapSecret(_ wrappedSecret: String) -> String? {
         
         /* Sanity checks */
         if (wrappedSecret == "" || serviceKeyPair == nil) {
@@ -536,7 +536,7 @@ class MasterPassword : NSObject {
         /* Have to decode first */
         let wrappedLength = wrappedSecret.characters.count
         if let rawSecret = Base64().base64decode(wrappedSecret, length: Int32(wrappedLength)) {
-            let rawBytes = UnsafeMutablePointer<UInt8>(rawSecret.bytes)
+            let rawBytes = UnsafeMutablePointer<UInt8>(mutating: rawSecret.bytes.bindMemory(to: UInt8.self, capacity: rawSecret.length))
             // Size of WrapBufLen
             var wrapBufLen = 0
             for i in 0..<4 {
@@ -546,18 +546,18 @@ class MasterPassword : NSObject {
             }
             
             /* Create the right NSData so we can decrypt using private key */
-            let wrapBufBytes = UnsafeMutablePointer<Void>(rawBytes.advancedBy(4))
-            if let aesKey = serviceKeyPair?.decryptData(NSData(bytesNoCopy: wrapBufBytes, length: wrapBufLen, freeWhenDone: false)) {
-                logger.log(.FINEST, message: "Public key decrypt in unwrap worked");
+            let wrapBufBytes = UnsafeMutableRawPointer(rawBytes.advanced(by: 4))
+            if let aesKey = serviceKeyPair?.decryptData(Data(bytesNoCopy: wrapBufBytes, count: wrapBufLen, deallocator: .none)) {
+                logger.log(.finest, message: "Public key decrypt in unwrap worked");
                 
                 /* Now get the last part of the buffer */
-                let aesBytes = UnsafeMutablePointer<Void>(rawBytes.advancedBy(4 + wrapBufLen))
+                let aesBytes = UnsafeMutableRawPointer(rawBytes.advanced(by: 4 + wrapBufLen))
                 let aes = AESKey()
                 if aes.loadKey(aesKey) {
-                    if let decrypt = aes.decryptData(NSData(bytesNoCopy: aesBytes, length: rawSecret.length - 4 - wrapBufLen, freeWhenDone: false)) {
-                        logger.log(.FINEST, message: "AES decrypt in unwrap worked");
-                        let ret = Base64().base64encode(decrypt, length: Int32(decrypt.length))
-                        return String(ret)
+                    if let decrypt = aes.decryptData(Data(bytesNoCopy: aesBytes, count: rawSecret.length - 4 - wrapBufLen, deallocator: .none)) {
+                        logger.log(.finest, message: "AES decrypt in unwrap worked");
+                        let ret = Base64().base64encode(decrypt as Data, length: Int32(decrypt.length))
+                        return String(describing: ret)
                     }
                 }
             }
@@ -574,15 +574,15 @@ class MasterPassword : NSObject {
         }
         
         // This is a fail safe - not a good idea as this can change
-        return UIDevice.currentDevice().identifierForVendor!.UUIDString
+        return UIDevice.current.identifierForVendor!.uuidString
     }
     
     func getDeviceName() -> String {
-        return UIDevice.currentDevice().name
+        return UIDevice.current.name
     }
     
     // MARK: Service handling
-    func checkServiceActive(callback: MasterPasswordCallback?, registerCallback: Bool) -> Bool {
+    func checkServiceActive(_ callback: MasterPasswordCallback?, registerCallback: Bool) -> Bool {
         
         if registerCallback && callback != nil {
             callbacks.append(callback!)
@@ -595,7 +595,7 @@ class MasterPassword : NSObject {
     // Called by the service initialiser when done
     func serviceActivated() {
         
-        logger.log(.DEBUG, message: "Service activation completed successfully - starting callbacks")
+        logger.log(.debug, message: "Service activation completed successfully - starting callbacks")
         serviceActive = true
         
         for i in callbacks {
@@ -607,14 +607,14 @@ class MasterPassword : NSObject {
     func serviceDeactivated() {
         
         if serviceActive {
-            logger.log(.DEBUG, message: "Service activation reversed - destroying service details")
+            logger.log(.debug, message: "Service activation reversed - destroying service details")
             serviceActive = false
         
             /* Destroy keys */
             serviceKey = nil
             if serviceKeyPair != nil {
                 /* Remove key from key chain as well as deleting our copy */
-                serviceKeyPair?.destroyKey(true)
+                serviceKeyPair?.destroy(true)
                 serviceKeyPair = nil
             }
             

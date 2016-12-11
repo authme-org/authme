@@ -28,6 +28,6 @@ import Foundation
 
 protocol AuthMeServiceDelegate {
     
-    func service(service: AuthMeService, didCompletOperation: AuthMeServiceOperation, withOpaqueData opaqueData: AnyObject?)
+    func service(_ service: AuthMeService, didCompletOperation: AuthMeServiceOperation, withOpaqueData opaqueData: AnyObject?)
     
 }

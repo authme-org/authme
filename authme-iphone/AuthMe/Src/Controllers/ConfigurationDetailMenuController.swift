@@ -26,6 +26,19 @@
 
 import UIKit
 import Foundation
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
 
 class ConfigurationDetailMenuController: UITableViewController, UITextFieldDelegate {
     
@@ -51,25 +64,28 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         // Do any additional setup after loading the view, typically from a nib.
         
         // Do we need a save button?
-        for var i = 0; i <  configTemplate?.count ; i += 1 {
-            
-            let dict = configTemplate?.objectAtIndex(i) as! NSDictionary
-            if let sectionConfig = dict.objectForKey("ConfigurationItems") as? NSArray {
+        if let configCount = configTemplate?.count {
+            for var i in 0...configCount {
+                //        for var i = 0; i <  configTemplate?.count ; i += 1 {
                 
-                for j in 0 ..< sectionConfig.count {
+                let dict = configTemplate?.object(at: i) as! NSDictionary
+                if let sectionConfig = dict.object(forKey: "ConfigurationItems") as? NSArray {
                     
-                    if let config = sectionConfig.objectAtIndex(j) as? NSDictionary {
-                        if  (config.objectForKey("DBClass") != nil && config.objectForKey("DBClass") as? String == "String") ||
-                            config.objectForKey("InputType") != nil ||
-                            config.objectForKey("KeyChainService") != nil {
+                    for j in 0 ..< sectionConfig.count {
                         
-                                let saveButton = UIBarButtonItem(barButtonSystemItem: .Save, target: self, action: #selector(ConfigurationDetailMenuController.save(_:)))
+                        if let config = sectionConfig.object(at: j) as? NSDictionary {
+                            if  (config.object(forKey: "DBClass") != nil && config.object(forKey: "DBClass") as? String == "String") ||
+                                config.object(forKey: "InputType") != nil ||
+                                config.object(forKey: "KeyChainService") != nil {
+                                
+                                let saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(ConfigurationDetailMenuController.save(_:)))
                                 self.navigationItem.rightBarButtonItem = saveButton
                                 if editFields == nil {
                                     editFields = NSMutableDictionary()
                                 }
                                 didEdit = false
                                 return
+                            }
                         }
                     }
                 }
@@ -78,23 +94,23 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         if didEdit {
-            logger.log(.DEBUG, message: "User navigated away without saving changes")
+            logger.log(.debug, message: "User navigated away without saving changes")
             let alert = UIAlertController(title: "Save Changes?",
                 message: "You have not saved your changes - do you want to do so?",
-                preferredStyle: UIAlertControllerStyle.Alert)
+                preferredStyle: UIAlertControllerStyle.alert)
             
-            alert.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default, handler: { action in
+            alert.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: { action in
                 self.save(self)
                 
             }))
-            alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: nil))
-            self.presentViewController(alert, animated:true, completion: nil)
+            alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.cancel, handler: nil))
+            self.present(alert, animated:true, completion: nil)
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         // If we were swapped out - reload
         
@@ -107,91 +123,91 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
     }
     
     
-    override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+    override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
 
         if let visibleCells = self.tableView.indexPathsForVisibleRows {
-            self.tableView.reloadRowsAtIndexPaths(visibleCells, withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView.reloadRows(at: visibleCells, with: UITableViewRowAnimation.automatic)
         }
     }
 
     
     // MARK: Cell Handling
-    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         /* Give us a nice "configuration look" cell.  Taken from a 
          * stackoverflow.com answer and converted to swift.
          * See: http://stackoverflow.com/questions/18822619/ios-7-tableview-like-in-settings-app-on-ipad
         */
         
-        if cell.respondsToSelector(Selector("tintColor")) {
+        if cell.responds(to: #selector(getter: UIView.tintColor)) {
             if tableView == self.tableView {
                 
                 /* This is us! */
                 let cornerRadius: CGFloat  = 5
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
                 let layer = CAShapeLayer()
-                let pathRef = CGPathCreateMutable()
-                let bounds = CGRectInset(cell.bounds, 10, 0)
+                let pathRef = CGMutablePath()
+                let bounds = cell.bounds.insetBy(dx: 10, dy: 0)
                 let tableBounds = tableView.bounds
-                logger.log(.DEBUG, message: "cell width = \(cell.bounds.width) table width = \(tableBounds.width) view width = \(self.view.bounds.width)")
+                logger.log(.debug, message: "cell width = \(cell.bounds.width) table width = \(tableBounds.width) view width = \(self.view.bounds.width)")
                 //var bounds = CGRectInset(cell.frame, 10, 0)
                 
                 var addLine = false
                 
                 /* Case of a singleton cell? */
-                if indexPath.row == 0 && indexPath.row == tableView.numberOfRowsInSection(indexPath.section) - 1 {
-                    CGPathAddRoundedRect(pathRef, nil, bounds, cornerRadius, cornerRadius)
+                if indexPath.row == 0 && indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+                    pathRef.__addRoundedRect(transform: nil, rect: bounds, cornerWidth: cornerRadius, cornerHeight: cornerRadius)
                 }
                 
                 /* Top cell of a multi cell group */
                 else if indexPath.row == 0 {
-                    CGPathMoveToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMaxY(bounds))
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMinY(bounds), CGRectGetMidX(bounds), CGRectGetMinY(bounds), cornerRadius)
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMinY(bounds), CGRectGetMaxX(bounds), CGRectGetMidY(bounds), cornerRadius);
-                    CGPathAddLineToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds));
-                    addLine = true;
+                    pathRef.move(to: CGPoint(x: bounds.minX, y: bounds.maxY))
+                    pathRef.addArc(tangent1End: CGPoint(x: bounds.minX, y: bounds.minY), tangent2End: CGPoint(x: bounds.midX, y: bounds.minY), radius: cornerRadius)
+                    pathRef.addArc(tangent1End: CGPoint(x: bounds.maxX, y: bounds.minY), tangent2End: CGPoint(x: bounds.maxX, y: bounds.midY), radius: cornerRadius)
+                    pathRef.addLine(to: CGPoint(x: bounds.maxX, y: bounds.maxY))
+                    addLine = true
                 }
                     
                 /* Bottom cell of a multi cell group */
-                else if indexPath.row == (tableView.numberOfRowsInSection(indexPath.section) - 1) {
+                else if indexPath.row == (tableView.numberOfRows(inSection: indexPath.section) - 1) {
                     
-                    CGPathMoveToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMinY(bounds))
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMaxY(bounds), CGRectGetMidX(bounds), CGRectGetMaxY(bounds), cornerRadius)
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds), CGRectGetMaxX(bounds), CGRectGetMidY(bounds), cornerRadius)
-                    CGPathAddLineToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMinY(bounds))
+                    pathRef.move(to: CGPoint(x: bounds.minX, y: bounds.minY))
+                    pathRef.addArc(tangent1End: CGPoint(x: bounds.minX, y: bounds.maxY), tangent2End: CGPoint(x: bounds.midX, y: bounds.maxY), radius: cornerRadius)
+                    pathRef.addArc(tangent1End: CGPoint(x: bounds.maxX, y: bounds.maxY), tangent2End: CGPoint(x: bounds.maxX, y: bounds.midY), radius: cornerRadius)
+                    pathRef.addLine(to: CGPoint(x: bounds.maxX, y: bounds.minY))
                 }
                 
                 else {
-                    CGPathAddRect(pathRef, nil, bounds);
+                    pathRef.addRect(bounds)
                     addLine = true;
                 }
                 
                 /* Now plot it */
                 layer.path = pathRef
                 //CFRelease(pathRef) - not required - automatically released now
-                layer.fillColor = UIColor(white: 1.0, alpha: 0.8).CGColor
+                layer.fillColor = UIColor(white: 1.0, alpha: 0.8).cgColor
                 
                 if addLine {
                     let lineLayer = CALayer()
-                    let lineHeight = 1.0 / UIScreen.mainScreen().scale
-                    lineLayer.frame = CGRectMake(CGRectGetMinX(bounds)+10, bounds.size.height-lineHeight, bounds.size.width-10, lineHeight)
-                    lineLayer.backgroundColor = tableView.separatorColor!.CGColor;
+                    let lineHeight = 1.0 / UIScreen.main.scale
+                    lineLayer.frame = CGRect(x: bounds.minX+10, y: bounds.size.height-lineHeight, width: bounds.size.width-10, height: lineHeight)
+                    lineLayer.backgroundColor = tableView.separatorColor!.cgColor;
                     layer.addSublayer(lineLayer)
                 }
                 
                 /* Now add it! */
                 let toAdd = UIView(frame: bounds)
-                toAdd.layer.insertSublayer(layer, atIndex: 0)
-                toAdd.backgroundColor = UIColor.clearColor()
+                toAdd.layer.insertSublayer(layer, at: 0)
+                toAdd.backgroundColor = UIColor.clear
                 cell.backgroundView = toAdd
                 
                 /* Now for when selected */
                 let bgLayer = CAShapeLayer()
                 bgLayer.path = pathRef
-                bgLayer.fillColor = UIColor(red: (76.0/255), green: (161.0/255.0), blue: 1.0, alpha: 1.0).CGColor
+                bgLayer.fillColor = UIColor(red: (76.0/255), green: (161.0/255.0), blue: 1.0, alpha: 1.0).cgColor
                 
                 let bgColourView = UIView(frame: bounds)
-                bgColourView.layer.insertSublayer(bgLayer, atIndex: 0)
+                bgColourView.layer.insertSublayer(bgLayer, at: 0)
                 bgColourView.layer.masksToBounds = true;
                 cell.selectedBackgroundView = bgColourView;
 
@@ -202,21 +218,21 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
     }
     
     // Customize the appearance of table view cells.
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        logger.log(.FINE, message: "At start of cellForRowAtIndexPath")
+        logger.log(.fine, message: "At start of cellForRowAtIndexPath")
         
         /* Load the specific configuration section for where we are */
         var _config: NSDictionary? = nil
         
-        if let dict = configTemplate?.objectAtIndex(indexPath.section) as? NSDictionary {
-            if let array = dict.objectForKey("ConfigurationItems") as? NSArray {
-                _config = array.objectAtIndex(indexPath.row) as? NSDictionary
+        if let dict = configTemplate?.object(at: indexPath.section) as? NSDictionary {
+            if let array = dict.object(forKey: "ConfigurationItems") as? NSArray {
+                _config = array.object(at: indexPath.row) as? NSDictionary
             }
         }
         
         if _config == nil {
-            logger.log(.ERROR, message: "Error loading configTemplate")
+            logger.log(.error, message: "Error loading configTemplate")
             return UITableViewCell()
         }
         
@@ -224,10 +240,10 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         let appConfiguration = AppConfiguration.getInstance()
         
         /* What kind of cell should we load? */
-        if  (config.objectForKey("DBClass") != nil && config.objectForKey("DBClass") as? String == "String") ||
-            (config.objectForKey("ConfigClass") != nil && config.objectForKey("ConfigClass") as? String == "String") ||
-            config.objectForKey("InputType") != nil ||
-            config.objectForKey("Password") != nil {
+        if  (config.object(forKey: "DBClass") != nil && config.object(forKey: "DBClass") as? String == "String") ||
+            (config.object(forKey: "ConfigClass") != nil && config.object(forKey: "ConfigClass") as? String == "String") ||
+            config.object(forKey: "InputType") != nil ||
+            config.object(forKey: "Password") != nil {
             
             // Something we're going to save in a database
             let LEFT_LABEL_TAG = 2001
@@ -237,10 +253,10 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
             var leftLabel: UILabel? = nil
             var editField: UITextField? = nil
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as UITableViewCell?
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as UITableViewCell?
             leftLabel = cell?.viewWithTag(LEFT_LABEL_TAG) as? UILabel
             
-            var displayName = config.objectForKey("DisplayNameShort") as? String
+            var displayName = config.object(forKey: "DisplayNameShort") as? String
             if displayName != nil {
                 leftLabel?.text = displayName!
             }
@@ -252,20 +268,20 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
             editField = cell?.viewWithTag(EDIT_TAG) as? UITextField
             
             /* Load the approprate field to edit */
-            var rl = editFields?.objectForKey(displayName!) as? NSString
+            var rl = editFields?.object(forKey: displayName!) as? NSString
             if rl == nil {
                 
                 /* Is this if from the database... */
-                if let dbAttribute = config.objectForKey("DBAttribute") as? NSString {
-                    logger.log(.DEBUG, message: "Loading string from store")
+                if let dbAttribute = config.object(forKey: "DBAttribute") as? NSString {
+                    logger.log(.debug, message: "Loading string from store")
                     rl = appConfiguration.getConfigItem(dbAttribute) as! NSString?
                 }
-                else if let _ = config.objectForKey("ConfigAttribute") as? NSString {
-                    logger.log(.DEBUG, message: "Config only string - loading as blank")
+                else if let _ = config.object(forKey: "ConfigAttribute") as? NSString {
+                    logger.log(.debug, message: "Config only string - loading as blank")
                     rl = ""
                 }
-                else if let _ = config.objectForKey("Password")  {
-                    rl = appConfiguration.getServicePassword()
+                else if let _ = config.object(forKey: "Password")  {
+                    rl = appConfiguration.getServicePassword() as NSString?
                 }
                 
                 if (rl == nil) {
@@ -275,30 +291,30 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
                 editFields?.setValue(rl, forKey: displayName!)
             }
             else {
-                logger.log(.FINE, message: "Loaded temporary empty string")
+                logger.log(.fine, message: "Loaded temporary empty string")
             }
         
             editField?.text = rl as String!
             editField?.delegate = self
             
             /* Is this a hidden field? */
-            if let secureFromConf = config.objectForKey("SecureEntry") as? Bool {
-                editField?.secureTextEntry = secureFromConf
+            if let secureFromConf = config.object(forKey: "SecureEntry") as? Bool {
+                editField?.isSecureTextEntry = secureFromConf
             }
             else {
-                editField?.secureTextEntry = false;
+                editField?.isSecureTextEntry = false;
             }
             
-            cell?.selectionStyle = UITableViewCellSelectionStyle.None
+            cell?.selectionStyle = UITableViewCellSelectionStyle.none
             return cell!
 
             
         }
         
-        if (config.objectForKey("DBClass") != nil && config.objectForKey("DBClass") as? String == "Bool")  ||
-           (config.objectForKey("ConfigClass") != nil && config.objectForKey("ConfigClass") as? String == "Bool") {
+        if (config.object(forKey: "DBClass") != nil && config.object(forKey: "DBClass") as? String == "Bool")  ||
+           (config.object(forKey: "ConfigClass") != nil && config.object(forKey: "ConfigClass") as? String == "Bool") {
             
-            logger.log(.FINE, message: "Creating a cell for a boolean value")
+            logger.log(.fine, message: "Creating a cell for a boolean value")
             
             // A Boolean value
             let LEFT_LABEL_TAG = 2020
@@ -308,60 +324,60 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
             var leftLabel: UILabel? = nil
             var switchField: UISwitch? = nil
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as UITableViewCell?
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as UITableViewCell?
             leftLabel = cell?.viewWithTag(LEFT_LABEL_TAG) as? UILabel
             
-            var displayName = config.objectForKey("DisplayNameShort") as? String
+            var displayName = config.object(forKey: "DisplayNameShort") as? String
             if displayName != nil {
                 leftLabel?.text = displayName!
             }
             else {
                 displayName = "ERROR IN CONFIG"
                 leftLabel?.text = "fff"
-                logger.log(.ERROR, message: "Config item without DisplayNameShort")
+                logger.log(.error, message: "Config item without DisplayNameShort")
             }
             
             switchField = cell?.viewWithTag(SWITCH_TAG) as? UISwitch
-            switchField?.addTarget(self, action: #selector(ConfigurationDetailMenuController.switchTapped(_:)), forControlEvents: UIControlEvents.ValueChanged)
+            switchField?.addTarget(self, action: #selector(ConfigurationDetailMenuController.switchTapped(_:)), for: UIControlEvents.valueChanged)
             
             var valueToEdit: Bool? = nil
             /* Load the approprate field to edit */
-            if let valueToEditObject = editFields?.objectForKey(displayName!) as? NSNumber {
+            if let valueToEditObject = editFields?.object(forKey: displayName!) as? NSNumber {
                 valueToEdit = valueToEditObject.boolValue
             }
             
             if valueToEdit == nil {
-                if let dbAttribute = config.objectForKey("DBAttribute") as? NSString {
-                    logger.log(.DEBUG, message: "Loading Boolean value from store")
+                if let dbAttribute = config.object(forKey: "DBAttribute") as? NSString {
+                    logger.log(.debug, message: "Loading Boolean value from store")
                     if let numberValueToEdit = appConfiguration.getConfigItem(dbAttribute) as? NSNumber {
                         valueToEdit = numberValueToEdit.boolValue
                     }
                 }
                     
-                else if let _ = config.objectForKey("ConfigAttribute") as? NSString {
-                    logger.log(.DEBUG, message: "Loading Boolean config default value")
-                    if let numberValueToEdit = config.objectForKey("DefaultValue") as? NSNumber {
+                else if let _ = config.object(forKey: "ConfigAttribute") as? NSString {
+                    logger.log(.debug, message: "Loading Boolean config default value")
+                    if let numberValueToEdit = config.object(forKey: "DefaultValue") as? NSNumber {
                         valueToEdit = numberValueToEdit.boolValue
                     }
                 }
             }
             
             if valueToEdit == nil {
-                logger.log(.ERROR, message: "Error retrieving value from store")
+                logger.log(.error, message: "Error retrieving value from store")
                 valueToEdit = true
             }
             
             switchField?.setOn(valueToEdit!, animated: false)
             
-            editFields?.setValue(NSNumber(bool: valueToEdit!), forKey: displayName!)
+            editFields?.setValue(NSNumber(value: valueToEdit! as Bool), forKey: displayName!)
                         
-            cell?.selectionStyle = UITableViewCellSelectionStyle.None
+            cell?.selectionStyle = UITableViewCellSelectionStyle.none
             return cell!
 
             
         }
         
-        if config.objectForKey("SpecialAction") != nil {
+        if config.object(forKey: "SpecialAction") != nil {
             
             // THis is a "special" cell.  Have to hard wire some stuff
             let LEFT_LABEL_TAG = 2010
@@ -369,10 +385,10 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
             
             var leftLabel: UILabel? = nil
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as UITableViewCell?
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as UITableViewCell?
             leftLabel = cell?.viewWithTag(LEFT_LABEL_TAG) as? UILabel
             
-            var displayName = config.objectForKey("DisplayNameShort") as? String
+            var displayName = config.object(forKey: "DisplayNameShort") as? String
             if displayName != nil {
                 leftLabel?.text = displayName!
             }
@@ -381,7 +397,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
                 leftLabel?.text = "fff"
             }
             
-            cell?.selectionStyle = UITableViewCellSelectionStyle.None
+            cell?.selectionStyle = UITableViewCellSelectionStyle.none
             return cell!
             
             
@@ -394,7 +410,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
     
     // MARK: Table data handling
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // Return the number of sections.
         
         if configTemplate != nil {
@@ -405,17 +421,17 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         var count = 0
 
-        if let dict = configTemplate?.objectAtIndex(section) as? NSDictionary {
-            if let array = dict.objectForKey("ConfigurationItems") as? NSArray {
-                for configObject : AnyObject in array {
+        if let dict = configTemplate?.object(at: section) as? NSDictionary {
+            if let array = dict.object(forKey: "ConfigurationItems") as? NSArray {
+                for configObject : AnyObject in array as [AnyObject] {
                     if let config = configObject as? NSDictionary {
-                        if let configKey = config.objectForKey("ConfigDepends") as? NSString {
+                        if let configKey = config.object(forKey: "ConfigDepends") as? NSString {
                             // We depend on something!
-                            if let configVal = editFields?.objectForKey(configKey) as? NSNumber {
+                            if let configVal = editFields?.object(forKey: configKey) as? NSNumber {
                                 if configVal.boolValue {
                                     count += 1
                                 }
@@ -434,10 +450,10 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String {
         
-        if let dict = configTemplate?.objectAtIndex(section) as? NSDictionary {
-            if let str = dict.objectForKey("GroupName") as? String {
+        if let dict = configTemplate?.object(at: section) as? NSDictionary {
+            if let str = dict.object(forKey: "GroupName") as? String {
                 return str
             }
         }
@@ -446,9 +462,9 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
     }
     
-    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
-        if let dict = configTemplate?.objectAtIndex(section) as? NSDictionary {
-            if let str = dict.objectForKey("GroupDescription") as? String {
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String {
+        if let dict = configTemplate?.object(at: section) as? NSDictionary {
+            if let str = dict.object(forKey: "GroupDescription") as? String {
                 return str
             }
         }
@@ -457,18 +473,18 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
     }
     
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return false
     }
     
     // MARK: Text field delegate methods
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         currentTextField = textField
         didEdit = true
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         let cell = textField.superview?.superview
         
         if cell == nil {
@@ -476,12 +492,12 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         }
         
         /* For iOS 7 - no longer rely on the view hierarchy */
-        let pos = textField.convertPoint(CGPointZero, toView:self.tableView)
-        if let indexPath = self.tableView.indexPathForRowAtPoint(pos) {
-            if let configDict = configTemplate!.objectAtIndex(indexPath.section) as? NSDictionary {
-                if let configArray = configDict.objectForKey("ConfigurationItems") as? NSArray {
-                    let dict = configArray.objectAtIndex(indexPath.row) as! NSDictionary
-                    if let key = dict.objectForKey("DisplayNameShort")  as? NSString {
+        let pos = textField.convert(CGPoint.zero, to:self.tableView)
+        if let indexPath = self.tableView.indexPathForRow(at: pos) {
+            if let configDict = configTemplate!.object(at: indexPath.section) as? NSDictionary {
+                if let configArray = configDict.object(forKey: "ConfigurationItems") as? NSArray {
+                    let dict = configArray.object(at: indexPath.row) as! NSDictionary
+                    if let key = dict.object(forKey: "DisplayNameShort")  as? NSString {
                         editFields?.setValue(textField.text, forKey: key as String)
                     }
                     
@@ -490,57 +506,57 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         }
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return false
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         /* First find the configuration item we are dealing with */
-        if let configDict = configTemplate!.objectAtIndex(indexPath.section) as? NSDictionary {
-            if let configArray = configDict.objectForKey("ConfigurationItems") as? NSArray {
-                let dict = configArray.objectAtIndex(indexPath.row) as! NSDictionary
+        if let configDict = configTemplate!.object(at: indexPath.section) as? NSDictionary {
+            if let configArray = configDict.object(forKey: "ConfigurationItems") as? NSArray {
+                let dict = configArray.object(at: indexPath.row) as! NSDictionary
                 
                 // Got the right config spot - see if we need to do anything special
-                if let _ = dict.objectForKey("SpecialAction") as? NSString {
+                if let _ = dict.object(forKey: "SpecialAction") as? NSString {
                     
                     // Nothing in here for now
-                    logger.log(.DEBUG, message: "Somehow got a special action?")
+                    logger.log(.debug, message: "Somehow got a special action?")
                 }
             }
         }
     }
     
     // MARK: Detect switch changes
-    func switchTapped(uiSwitch: UISwitch) {
-        logger.log(.FINEST, message: "Value of config switch changed")
+    func switchTapped(_ uiSwitch: UISwitch) {
+        logger.log(.finest, message: "Value of config switch changed")
         
         /* Find what switch it was */
-        let position = uiSwitch.convertPoint(CGPointZero, toView: self.tableView)
-        if let indexPath = self.tableView.indexPathForRowAtPoint(position) {
+        let position = uiSwitch.convert(CGPoint.zero, to: self.tableView)
+        if let indexPath = self.tableView.indexPathForRow(at: position) {
             
             // Get this value from the config
-            let dict = configTemplate?.objectAtIndex(indexPath.section) as! NSDictionary
-            if let sectionConfig = dict.objectForKey("ConfigurationItems") as? NSArray {
-                if let config = sectionConfig.objectAtIndex(indexPath.row) as? NSDictionary {
-                    if let dbAttribute = config.objectForKey("DBAttribute") as? NSString {
-                        logger.log(.DEBUG, message: "Updating state for \(dbAttribute)")
+            let dict = configTemplate?.object(at: indexPath.section) as! NSDictionary
+            if let sectionConfig = dict.object(forKey: "ConfigurationItems") as? NSArray {
+                if let config = sectionConfig.object(at: indexPath.row) as? NSDictionary {
+                    if let dbAttribute = config.object(forKey: "DBAttribute") as? NSString {
+                        logger.log(.debug, message: "Updating state for \(dbAttribute)")
                         let appConfiguration = AppConfiguration.getInstance()
-                            appConfiguration.setConfigItem(dbAttribute, value: NSNumber(bool: uiSwitch.on))
+                            appConfiguration.setConfigItem(dbAttribute, value: NSNumber(value: uiSwitch.isOn as Bool))
                     }
-                    else if let _ = config.objectForKey("ConfigAttribute") as? NSString {
-                        if let displayName = config.objectForKey("DisplayNameShort") as? NSString {
+                    else if let _ = config.object(forKey: "ConfigAttribute") as? NSString {
+                        if let displayName = config.object(forKey: "DisplayNameShort") as? NSString {
                             // This is an internal only switch - need to store its state
                             // and then reload the table
-                            logger.log(.FINE, message: "Config switch state changed")
-                            editFields?.setValue(NSNumber(bool: uiSwitch.on), forKey: displayName as String)
+                            logger.log(.fine, message: "Config switch state changed")
+                            editFields?.setValue(NSNumber(value: uiSwitch.isOn as Bool), forKey: displayName as String)
                             
                             // Reload
                             self.tableView.reloadData()
                         }
                         else {
-                            logger.log(.ERROR, message: "Unable to load DisplayNameShort for switch value")
+                            logger.log(.error, message: "Unable to load DisplayNameShort for switch value")
                         }
                     }
                 }
@@ -549,7 +565,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
     }
     
     // MARK: Hardwired Calls
-    func hardWired(function: String) {
+    func hardWired(_ function: String) {
         
         switch function {
         
@@ -558,41 +574,41 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         case "updateUserDetails":
             updateUserDetails()
         default:
-            logger.log(.ERROR, message: "Unknown selector in configuration \(function)")
+            logger.log(.error, message: "Unknown selector in configuration \(function)")
         }
     }
 
     // MARK: Save and update
-    func errorMessage(title: String, message: String) {
+    func errorMessage(_ title: String, message: String) {
     
         let alert = UIAlertController(title: title,
-            message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-        self.presentViewController(alert, animated: false, completion: nil)
+            message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: false, completion: nil)
 
     }
     
     func runLoopDismiss() {
         // Put this on the run-loop so it executes after we shut down
-        logger.log(.DEBUG, message: "Dismissing controller")
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64((Double(0.25)) * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
+        logger.log(.debug, message: "Dismissing controller")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64((Double(0.25)) * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
             if let nav = self.splitViewController?.viewControllers[0] as? UINavigationController {
-                nav.popViewControllerAnimated(true)
+                nav.popViewController(animated: true)
             }
             else {
-                self.logger.log(.DEBUG, message: "No nav controller????")
+                self.logger.log(.debug, message: "No nav controller????")
             }
         })
     }
     
     func createNewUser() {
         
-        logger.log(.DEBUG, message: "Trying to create new user")
-        let name = editFields?.objectForKey("Name") as? String
-        let password = editFields?.objectForKey("Password") as? String
-        let passwordRepeat = editFields?.objectForKey("Repeat PW") as? String
-        let userId = editFields?.objectForKey("Username") as? String
-        let email = editFields?.objectForKey("Email") as? String
+        logger.log(.debug, message: "Trying to create new user")
+        let name = editFields?.object(forKey: "Name") as? String
+        let password = editFields?.object(forKey: "Password") as? String
+        let passwordRepeat = editFields?.object(forKey: "Repeat PW") as? String
+        let userId = editFields?.object(forKey: "Username") as? String
+        let email = editFields?.object(forKey: "Email") as? String
         
         if name == nil || name == "" {
             errorMessage("Error Creating User", message: "Name cannot be blank")
@@ -609,7 +625,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
             return
         }
         
-        if email?.rangeOfString("@") == nil {
+        if email?.range(of: "@") == nil {
             errorMessage("Error Creating User", message: "Email address must contain a '@' character")
             return
         }
@@ -630,8 +646,8 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
 */
         
         visibleAlert = UIAlertController(title: "Creating User",
-            message: "Connecting to AuthMe service to create user", preferredStyle: UIAlertControllerStyle.Alert)
-        self.presentViewController(visibleAlert!, animated: true, completion: nil)
+            message: "Connecting to AuthMe service to create user", preferredStyle: UIAlertControllerStyle.alert)
+        self.present(visibleAlert!, animated: true, completion: nil)
     
     }
     
@@ -642,7 +658,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
     }
 
-    func save(sender: AnyObject) {
+    func save(_ sender: AnyObject) {
         
         didEdit = false
         //var updatedUserDetails = false
@@ -651,35 +667,37 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
         let appConfiguration = AppConfiguration.getInstance()
         
-        for var i = 0; i <  configTemplate?.count ; i += 1 {
-            
-            let dict = configTemplate?.objectAtIndex(i) as! NSDictionary
-            if let sectionConfig = dict.objectForKey("ConfigurationItems") as? NSArray {
-            
-                for j in 0 ..< sectionConfig.count {
+        if let configTemplateCount = configTemplate?.count {
+            for var i in 0...configTemplateCount {
+                
+                let dict = configTemplate?.object(at: i) as! NSDictionary
+                if let sectionConfig = dict.object(forKey: "ConfigurationItems") as? NSArray {
                     
-                    if let config = sectionConfig.objectAtIndex(j) as? NSDictionary {
-                        if let storageKey = config.objectForKey("DisplayNameShort") as? NSString {
-                            if let value = editFields!.objectForKey(storageKey) as? NSString {
-                                if let dbAttribute = config.objectForKey("DBAttribute") as? NSString {
-                                    appConfiguration.setConfigItem(dbAttribute, value: value)
-                                }
-                                else  {
-                                    appConfiguration.setServicePassword(value)
-                                }
-                            }
-                            else if let _ = config.objectForKey("ConfigSelector") as? NSNumber {
-                                // This potentially calls functions in the current class
-                                if let value = editFields!.objectForKey(storageKey) as? NSNumber {
-                                    if value.boolValue {
-                                        if let selector = config.valueForKey("CallOnTrue") as? NSString {
-                                            // A selector to call!
-                                            hardWired(selector as String)
-                                        }
+                    for j in 0 ..< sectionConfig.count {
+                        
+                        if let config = sectionConfig.object(at: j) as? NSDictionary {
+                            if let storageKey = config.object(forKey: "DisplayNameShort") as? NSString {
+                                if let value = editFields!.object(forKey: storageKey) as? NSString {
+                                    if let dbAttribute = config.object(forKey: "DBAttribute") as? NSString {
+                                        appConfiguration.setConfigItem(dbAttribute, value: value)
                                     }
-                                    else {
-                                        if let selector = config.valueForKey("CallOnFalse") as? NSString {
-                                            hardWired(selector as String)
+                                    else  {
+                                        appConfiguration.setServicePassword(value)
+                                    }
+                                }
+                                else if let _ = config.object(forKey: "ConfigSelector") as? NSNumber {
+                                    // This potentially calls functions in the current class
+                                    if let value = editFields!.object(forKey: storageKey) as? NSNumber {
+                                        if value.boolValue {
+                                            if let selector = config.value(forKey: "CallOnTrue") as? NSString {
+                                                // A selector to call!
+                                                hardWired(selector as String)
+                                            }
+                                        }
+                                        else {
+                                            if let selector = config.value(forKey: "CallOnFalse") as? NSString {
+                                                hardWired(selector as String)
+                                            }
                                         }
                                     }
                                 }
