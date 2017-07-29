@@ -246,7 +246,7 @@ class AuthListController: UITableViewController, MasterPasswordCallback, AuthMeS
         }
         
         logger.log(.fine, message: "reloading auths")
-        authMe.getAuthChecks(self)
+        _ = authMe.getAuthChecks(self)
         
     }
     

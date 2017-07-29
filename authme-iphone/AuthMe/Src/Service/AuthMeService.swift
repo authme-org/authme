@@ -64,7 +64,7 @@ class AuthMeService : NSObject {
     }
 
     // MARK: Service Calls
-    
+    @discardableResult
     func addDevice(
         _ deviceUniqueId : String,
         withName name: String,
@@ -109,6 +109,7 @@ class AuthMeService : NSObject {
         return false
     }
     
+    @discardableResult
     func getDevice(_ deviceUniqueId: String,
         withNonce nonce: String,
         withOpaqueData opaque: AnyObject?,
@@ -136,6 +137,7 @@ class AuthMeService : NSObject {
         
     }
     
+    @discardableResult
     func getDevices(_ delegate: AuthMeServiceDelegate) -> Bool {
         logger.log(.debug, message: "GetDevices called")
         
@@ -158,6 +160,7 @@ class AuthMeService : NSObject {
         
     }
     
+    @discardableResult
     func getServiceKey(_ deviceUniqueId: String,
         withDelegate delegate: AuthMeServiceDelegate) -> Bool
     {
@@ -182,6 +185,7 @@ class AuthMeService : NSObject {
         return true
     }
     
+    @discardableResult
     func getAuthChecks(_ delegate: AuthMeServiceDelegate) -> Bool {
         
         logger.log(.debug, message: "GetAuthChecks called")
@@ -206,6 +210,7 @@ class AuthMeService : NSObject {
         
     }
     
+    @discardableResult
     func getSignatureSeed(_ delegate: AuthMeServiceDelegate, withOpaqueData opaqueData: AnyObject?) -> Bool {
         
         logger.log(.debug, message: "GetSignatureSeed called")
@@ -226,6 +231,7 @@ class AuthMeService : NSObject {
         return true
     }
     
+    @discardableResult
     func setAuthCheckStatus(_ svcSession: SvcSession, withStatus status: String, withSignature signature:AuthMeSign, withUnwrappedSecret unwrappedSecret: String, delegate: AuthMeServiceDelegate) -> Bool {
         
         logger.log(.debug, message: "setAuthCheckStatus called")
@@ -263,6 +269,7 @@ class AuthMeService : NSObject {
 
     }
     
+    @discardableResult
     func setServiceKey(_ deviceId: String,
         encryptedKeyValue: String,
         keyKCV: String,
@@ -323,6 +330,7 @@ class AuthMeService : NSObject {
 
     
     // MARK: URL Handling
+    @discardableResult
     func getServiceEntryURL(_ entryPoint: String) -> String {
         
         var base : String? = nil
@@ -375,10 +383,10 @@ class AuthMeService : NSObject {
         let operation = object as! AuthMeServiceOperation
         
         if operation.error != nil {
-            logger.log(.warn, message: "Got an error: \(operation.error?.description)")
+            logger.log(.warn, message: "Got an error: \(operation.error?.description ?? "Unknown")")
         }
         else {
-            logger.log(.debug, message: "URL : \(operation.url) worked")
+            logger.log(.debug, message: "URL : \(String(describing: operation.url)) worked")
         }
         
         if operation.delegate != nil {

@@ -28,7 +28,7 @@ import Foundation
 
 import Foundation
 
-class AuthMeServiceOperation: Operation, NSURLConnectionDelegate {
+class AuthMeServiceOperation: Operation, NSURLConnectionDataDelegate {
     
     var logger = Log()
     
@@ -80,7 +80,7 @@ class AuthMeServiceOperation: Operation, NSURLConnectionDelegate {
         self.isExecuting = true
         self.didChangeValue(forKey: "isExecuting")
         
-        logger.log(.debug, message: "Starting service thread for \(url)")
+        logger.log(.debug, message: "Starting service thread for \(String(describing: url))")
         
         /* Now kick off the connection! */
         let urlRequest = NSMutableURLRequest(url: url!)
@@ -208,7 +208,7 @@ class AuthMeServiceOperation: Operation, NSURLConnectionDelegate {
         }
     }
     
-    func connection(_ connection: NSURLConnection!, didReceiveResponse response: URLResponse!) {
+    func connection(_ connection: NSURLConnection, didReceive response: URLResponse) {
         
         if self.isCancelled {
             self.doCancel()
@@ -229,7 +229,7 @@ class AuthMeServiceOperation: Operation, NSURLConnectionDelegate {
             
             let statusError = "HTTP Error \(statusCode)"
             let userInfo = NSDictionary(object: statusError, forKey: NSLocalizedDescriptionKey as NSCopying)
-            error = NSError(domain: "DownloadUrlOperation", code: statusCode, userInfo: userInfo as! [AnyHashable: Any])
+            error = NSError(domain: "DownloadUrlOperation", code: statusCode, userInfo: (userInfo as! [AnyHashable: Any]))
             
             logger.log(.warn, message: statusError)
             
@@ -237,7 +237,7 @@ class AuthMeServiceOperation: Operation, NSURLConnectionDelegate {
         }
     }
     
-    func connection(_ connection: NSURLConnection!, didReceiveData data: Data!) {
+    func connection(_ connection: NSURLConnection, didReceive data: Data) {
         
         if self.isCancelled {
             self.doCancel()

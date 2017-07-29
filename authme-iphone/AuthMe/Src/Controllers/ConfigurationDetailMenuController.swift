@@ -65,7 +65,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
         // Do we need a save button?
         if let configCount = configTemplate?.count {
-            for var i in 0...configCount {
+            for i in 0..<configCount {
                 //        for var i = 0; i <  configTemplate?.count ; i += 1 {
                 
                 let dict = configTemplate?.object(at: i) as! NSDictionary

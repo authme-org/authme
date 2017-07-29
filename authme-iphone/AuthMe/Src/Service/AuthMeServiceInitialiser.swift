@@ -64,7 +64,7 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
         masterPassword.serviceDeactivated()
         
         /* Add device is where we kick off from */
-        authme.addDevice(
+        _ = authme.addDevice(
             masterPassword.getUniqueDeviceId(),
             withName: masterPassword.getDeviceName(),
             withType: "iPhone",
@@ -82,7 +82,7 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
         let nonce = df.string(from: date)
         
         // Call the getDevice web service.  This will encrypt the nonce using the public key
-        authme.getDevice(masterPassword.getUniqueDeviceId(), withNonce: nonce, withOpaqueData: nonce as AnyObject?, withDelegate: self)
+        _ = authme.getDevice(masterPassword.getUniqueDeviceId(), withNonce: nonce, withOpaqueData: nonce as AnyObject?, withDelegate: self)
         
         return;
     }
@@ -95,7 +95,7 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
                 if let decryptString = NSString(data: decrypt, encoding: String.Encoding.utf8.rawValue) {
                     if decryptString as String == nonce {
                         logger.log(.debug, message: "Decrypt of nonce OK")
-                        authme.getServiceKey(masterPassword.getUniqueDeviceId(), withDelegate: self)
+                        _ = authme.getServiceKey(masterPassword.getUniqueDeviceId(), withDelegate: self)
                         return;
                     }
                 }
@@ -160,16 +160,17 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
                 logger.log(.debug, message: "Service Key available")
                 if let encryptedKeyValue = json.object(forKey: "encryptedKeyValue") as? NSString {
                     
-                    let keyKCV = json.object(forKey: "keyKCV") as? NSString
+                    if let keyKCV = json.object(forKey: "keyKCV") as? NSString {
                     
-                    // Decrypt...
-                    if let serviceKeyRaw = masterPassword.deviceRSAKey?.decrypt(encryptedKeyValue as String) {
-                        let serviceKey = AESKey()
-                        if serviceKey.loadKey(serviceKeyRaw) && serviceKey.checkKCV(keyKCV as! String) {
-                            logger.log(.debug, message: "ServiceKey loaded")
-                            masterPassword.serviceKey = serviceKey
-                            loadServiceKeyPair(json)
-                            return;
+                        // Decrypt...
+                        if let serviceKeyRaw = masterPassword.deviceRSAKey?.decrypt(encryptedKeyValue as String) {
+                            let serviceKey = AESKey()
+                            if serviceKey.loadKey(serviceKeyRaw) && serviceKey.checkKCV(keyKCV as String) {
+                                logger.log(.debug, message: "ServiceKey loaded")
+                                masterPassword.serviceKey = serviceKey
+                                loadServiceKeyPair(json)
+                                return;
+                            }
                         }
                     }
                 }
@@ -192,23 +193,24 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
         
         if let encryptedPrivateKey = json.object(forKey: "encryptedPrivateKey") as? NSString {
             if let publicKey = json.object(forKey: "publicKey") as? NSString {
-                let privateKCV = json.object(forKey: "privateKCV") as? NSString
+                if let privateKCV = json.object(forKey: "privateKCV") as? NSString {
                 
-                // Decrypt the private key
-                if let decryptedPrivateKey = masterPassword.serviceKey?.decrypt(encryptedPrivateKey as String, cipherLength: 0) {
-                    let k = RSAKey(identifier: _AUTHME_SERVICE_RSA_KEY_TAG)
-                    if (k?.loadPKCS8PrivateKey(decryptedPrivateKey as Data!))! &&
-                        (k?.compareKCV(privateKCV as! String))!
-                    {
-                        if (k?.loadPublicKey(publicKey as String))! {
-                            masterPassword.serviceKeyPair = k
-                            logger.log(.debug, message: "Service Key Pair loaded")
-                            masterPassword.serviceActivated()
-                            return
+                    // Decrypt the private key
+                    if let decryptedPrivateKey = masterPassword.serviceKey?.decrypt(encryptedPrivateKey as String, cipherLength: 0) {
+                        let k = RSAKey(identifier: _AUTHME_SERVICE_RSA_KEY_TAG)
+                        if (k?.loadPKCS8PrivateKey(decryptedPrivateKey as Data!))! &&
+                            (k?.compareKCV(privateKCV as String))!
+                        {
+                            if (k?.loadPublicKey(publicKey as String))! {
+                                masterPassword.serviceKeyPair = k
+                                logger.log(.debug, message: "Service Key Pair loaded")
+                                masterPassword.serviceActivated()
+                                return
+                            }
                         }
                     }
                 }
-                    
+                
             }
         }
         
@@ -274,7 +276,7 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
     func signerDidComplete(_ signer: AuthMeSign, didSucceed: Bool, withOpaqueData opaqueData: AnyObject?) {
         logger.log(.debug, message: "Signer returned")
         
-        authme.setServiceKey(masterPassword.getUniqueDeviceId(),
+        _ = authme.setServiceKey(masterPassword.getUniqueDeviceId(),
             encryptedKeyValue: encryptedServiceAESKey,
             keyKCV: serviceAESKCV,
             encryptedPrivateKey: encryptedServicePrivateKey,

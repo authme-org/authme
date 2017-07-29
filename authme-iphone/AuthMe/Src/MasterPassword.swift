@@ -233,7 +233,7 @@ class MasterPassword : NSObject {
                         logger.log(.debug, message: "Store removed OK")
                     } catch let error as NSError {
                         errorCode = error
-                        logger.log(.debug, message: "Store removal Error: \(errorCode), \(errorCode?.userInfo)");
+                        logger.log(.debug, message: "Store removal Error: \(errorCode as Optional), \(errorCode?.userInfo as Optional)");
                     }
             
                     // Now delete the file
@@ -242,7 +242,7 @@ class MasterPassword : NSObject {
                     if FileManager.default.fileExists(atPath: store.url!.path) {
                         do {
                             try FileManager.default.removeItem(atPath: store.url!.path)
-                            logger.log(.debug, message:"Unresolved error \(errorCode), \(errorCode?.userInfo)")
+                            logger.log(.debug, message:"Unresolved error \(errorCode as Optional), \(errorCode?.userInfo as Optional)")
                         } catch let error as NSError {
                             errorCode = error
                             logger.log(.debug, message: "Store file deleted OK")
@@ -469,7 +469,7 @@ class MasterPassword : NSObject {
                         // encrypt/decrypt to see it works
                         good = false
                         if let decryptedPrivateKey = storeKey?.decrypt(cachedConfig!.deviceKeyPrivate!, cipherLength: 0) {
-                            if deviceRSAKey!.loadPrivateKey(NSString(data: decryptedPrivateKey as Data, encoding: String.Encoding.utf8.rawValue) as! String) {
+                            if deviceRSAKey!.loadPrivateKey(NSString(data: decryptedPrivateKey as Data, encoding: String.Encoding.utf8.rawValue)! as String) {
                                 if deviceRSAKey!.loadPublicKey(cachedConfig!.deviceKeyPublic) {
                                     logger.log(.debug, message: "RSA Key loaded")
                                     
