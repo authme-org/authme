@@ -668,7 +668,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         let appConfiguration = AppConfiguration.getInstance()
         
         if let configTemplateCount = configTemplate?.count {
-            for var i in 0...configTemplateCount {
+            for i in 0..<configTemplateCount {
                 
                 let dict = configTemplate?.object(at: i) as! NSDictionary
                 if let sectionConfig = dict.object(forKey: "ConfigurationItems") as? NSArray {
