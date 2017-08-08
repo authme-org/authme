@@ -305,6 +305,9 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
                 editField?.isSecureTextEntry = false;
             }
             
+            /* Turn off spelling checks and text lookup */
+            editField?.autocorrectionType = UITextAutocorrectionType.no
+            
             cell?.selectionStyle = UITableViewCellSelectionStyle.none
             return cell!
 

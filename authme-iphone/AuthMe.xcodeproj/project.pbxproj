@@ -88,6 +88,7 @@
 		11D0B97D1AABB747003B1721 /* AuthMeServiceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeServiceDelegate.swift; path = Src/Service/AuthMeServiceDelegate.swift; sourceTree = "<group>"; };
 		11D0B9831AABBB85003B1721 /* ServiceConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ServiceConfig.plist; sourceTree = "<group>"; };
 		11D0B9861AAD0D2C003B1721 /* SvcSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SvcSession.swift; path = Src/Service/Model/SvcSession.swift; sourceTree = "<group>"; };
+		11E14AC81F36ACB600D5B7C1 /* AuthMe 0.02.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AuthMe 0.02.xcdatamodel"; sourceTree = "<group>"; };
 		11E345331C5C8100000EF657 /* AuthMeSign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeSign.swift; path = Src/Service/AuthMeSign.swift; sourceTree = "<group>"; };
 		11E345341C5C8100000EF657 /* AuthMeSignDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthMeSignDelegate.swift; path = Src/Service/AuthMeSignDelegate.swift; sourceTree = "<group>"; };
 		11E345371C5C825B000EF657 /* ConfigurationDetailMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConfigurationDetailMenuController.swift; path = Src/Controllers/ConfigurationDetailMenuController.swift; sourceTree = "<group>"; };
@@ -637,9 +638,10 @@
 		1117EB181AA3959500A13D7B /* AuthMe.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				11E14AC81F36ACB600D5B7C1 /* AuthMe 0.02.xcdatamodel */,
 				1117EB191AA3959500A13D7B /* AuthMe.xcdatamodel */,
 			);
-			currentVersion = 1117EB191AA3959500A13D7B /* AuthMe.xcdatamodel */;
+			currentVersion = 11E14AC81F36ACB600D5B7C1 /* AuthMe 0.02.xcdatamodel */;
 			path = AuthMe.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

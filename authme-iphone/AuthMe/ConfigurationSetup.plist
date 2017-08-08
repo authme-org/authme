@@ -56,14 +56,26 @@
 		<array>
 			<dict>
 				<key>DisplayNameShort</key>
-				<string>Service URL</string>
-				<key>DebugOnly</key>
-				<true/>
+				<string>Debug Configuration</string>
 				<key>SubMenu</key>
 				<array>
 					<dict>
+						<key>GroupName</key>
+						<string>Debug Options</string>
+						<key>GroupDescription</key>
+						<string>Only used for debugging builds - allow switch to a debug URL rather than prod</string>
 						<key>ConfigurationItems</key>
 						<array>
+							<dict>
+								<key>DBClass</key>
+								<string>Bool</string>
+								<key>DBAttribute</key>
+								<string>useDebugURL</string>
+								<key>DefaultValue</key>
+								<false/>
+								<key>DisplayNameShort</key>
+								<string>Use Debug URL</string>
+							</dict>
 							<dict>
 								<key>DBAttribute</key>
 								<string>serviceURL</string>
@@ -74,17 +86,23 @@
 								<key>DisplayNameShort</key>
 								<string>URL</string>
 							</dict>
+							<dict>
+								<key>DBAttribute</key>
+								<string>serviceDebugURL</string>
+								<key>DBClass</key>
+								<string>String</string>
+								<key>DefaultValue</key>
+								<string>http://dev.wingsofhermes.org/AuthMeWS/UserWS/</string>
+								<key>DisplayNameShort</key>
+								<string>Debug URL</string>
+							</dict>
 						</array>
-						<key>GroupName</key>
-						<string>AuthMe Service URL</string>
-						<key>GroupDescription</key>
-						<string>Enter URL for service you use.  Default is:  https://service.readercom.com/readercom-ws</string>
 					</dict>
 				</array>
+				<key>SubMenuTitle</key>
+				<string>Debug Options</string>
 				<key>SubMenuAction</key>
 				<string>SaveToLocalStore</string>
-				<key>SubMenuTitle</key>
-				<string>PWitC Password</string>
 			</dict>
 		</array>
 		<key>GroupName</key>

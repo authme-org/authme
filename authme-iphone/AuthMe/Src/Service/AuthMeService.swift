@@ -336,16 +336,39 @@ class AuthMeService : NSObject {
         var base : String? = nil
 
         // First try from configuration
-        if let configBase = AppConfiguration.getInstance().getConfigItem("serviceURL") as? String {
-            if configBase != "" {
-                base = configBase
+        #if DEBUG
+            let doDebug = AppConfiguration.getInstance().getConfigItem("useDebugURL") as? NSNumber
+            if  doDebug == 1 {
+                if let configBase = AppConfiguration.getInstance().getConfigItem("serviceDebugURL") as? String {
+                    if configBase != "" {
+                        base = configBase
+                    }
+                }
             }
-        }
+            else {
+                if let configBase = AppConfiguration.getInstance().getConfigItem("serviceURL") as? String {
+                    if configBase != "" {
+                        base = configBase
+                    }
+                }
+            }
+        #else
+            if let configBase = AppConfiguration.getInstance().getConfigItem("serviceURL") as? String {
+                if configBase != "" {
+                    base = configBase
+                }
+            }
+        #endif
         
         if base == nil {
         
             #if DEBUG
-                base = servicePlist.value(forKey: "BaseURLDebug") as? String
+                if doDebug == 1 {
+                    base = servicePlist.value(forKey: "BaseURLDebug") as? String
+                }
+                else {
+                    base = servicePlist.value(forKey: "BaseURL") as? String
+                }
             #else
                 base = servicePlist.value(forKey: "BaseURL") as? String
             #endif

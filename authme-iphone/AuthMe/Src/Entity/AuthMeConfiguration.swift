@@ -32,6 +32,8 @@ class AuthMeConfiguration: NSManagedObject {
     @NSManaged var registered: NSNumber
     @NSManaged var servicePassword: String
     @NSManaged var serviceURL: String
+    @NSManaged var serviceDebugURL: String
     @NSManaged var serviceUsername: String
+    @NSManaged var useDebugURL: NSNumber
 
 }

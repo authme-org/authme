@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>BaseURL</key>
-	<string>https://www.readercom.com/AuthMeWS/UserWS/</string>
+	<string>https://www.authme.org/AuthMeWS/UserWS/</string>
 	<key>BaseURLDebug</key>
-	<string>http://pluto:8080/AuthMeWS/UserWS/</string>
+	<string>http://dev.wingsofhermes.org/AuthMeWS/UserWS/</string>
 	<key>EntryPoints</key>
 	<dict>
 		<key>AddDevice</key>

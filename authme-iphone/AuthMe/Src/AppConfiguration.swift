@@ -47,7 +47,7 @@ class AppConfiguration {
     // if a key exists.  Under Objective C we used to be able to catch the
     // exception (still a hack I suppose :( )
     
-    let knownConfigKeys = ["serviceUsername", "serviceURL", "servicePassword", "apnToken"]
+    let knownConfigKeys = ["serviceUsername", "serviceURL", "servicePassword", "apnToken", "serviceDebugURL", "useDebugURL"]
     
     var cachedConfig: AuthMeConfiguration? = nil
     var rootViewController: UIViewController? = nil
@@ -148,24 +148,28 @@ class AppConfiguration {
         // Empty username/password
         cachedConfig?.servicePassword = ""
         cachedConfig?.serviceUsername = ""
-        cachedConfig?.serviceURL = "http://pluto.wingsofhermes.org:8080/AuthMeWS/Svc"
+        cachedConfig?.serviceURL = "http://www.authme.org/AuthMeWS/Svc"
         
         // Get the base url from the service configuration
+        if let serviceBase = servicePlist.value(forKey: "BaseURLDebug") as? NSString {
+            cachedConfig?.serviceDebugURL = serviceBase as String
+        }
+        else {
+            cachedConfig?.serviceDebugURL = "http://dev.wingsofhermes.org/AuthMeWS/Svc"
+        }
+        
         #if DEBUG
-            if let serviceBase = servicePlist.value(forKey: "BaseURLDebug") as? NSString {
-                cachedConfig?.serviceURL = serviceBase as String
-            }
-            else {
-                cachedConfig?.serviceURL = "http://pluto:8080/AuthMeWS/Svc"
-            }
+            cachedConfig?.useDebugURL = 1
         #else
-            if let serviceBase = servicePlist.value(forKey: "BaseURL") as? NSString {
-                cachedConfig?.serviceURL = serviceBase as String
-            }
-            else {
-                cachedConfig?.serviceURL = "https://www.readercom.com/readercom/"
-            }
+            cachedConfig?.useDebugURL = 0
         #endif
+
+        if let serviceBase = servicePlist.value(forKey: "BaseURL") as? NSString {
+            cachedConfig?.serviceURL = serviceBase as String
+        }
+        else {
+            cachedConfig?.serviceURL = "https://www.authme.org/AuthMeWS/Svc"
+        }
         
     }
     
