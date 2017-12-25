@@ -532,7 +532,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
     }
     
     // MARK: Detect switch changes
-    func switchTapped(_ uiSwitch: UISwitch) {
+    @objc func switchTapped(_ uiSwitch: UISwitch) {
         logger.log(.finest, message: "Value of config switch changed")
         
         /* Find what switch it was */
@@ -661,7 +661,7 @@ class ConfigurationDetailMenuController: UITableViewController, UITextFieldDeleg
         
     }
 
-    func save(_ sender: AnyObject) {
+    @objc func save(_ sender: AnyObject) {
         
         didEdit = false
         //var updatedUserDetails = false

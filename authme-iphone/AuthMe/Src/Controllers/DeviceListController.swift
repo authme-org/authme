@@ -192,7 +192,7 @@ class DeviceListController: UITableViewController, MasterPasswordCallback, AuthM
     }
     
     // AuthList service interaction
-    func reloadDevices() {
+    @objc func reloadDevices() {
         
         if !serviceInitialised {
             return

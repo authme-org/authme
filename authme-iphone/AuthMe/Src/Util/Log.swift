@@ -50,7 +50,7 @@ class Log {
         /* First strip the filename */
         if let fileRange = filename.range(of: "/", options: NSString.CompareOptions.backwards, range: nil, locale: nil) {
             if !fileRange.isEmpty {
-                self.filename = filename.substring(from: fileRange.upperBound)
+                self.filename = String(filename[fileRange.upperBound...])
             }
             else {
                 self.filename = filename

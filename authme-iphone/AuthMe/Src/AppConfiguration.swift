@@ -193,7 +193,7 @@ class AppConfiguration {
         if let encryptedPassword = getConfigItem("servicePassword") as? String {
             let masterPassword = MasterPassword.getInstance()
             if masterPassword.storeKey != nil {
-                if let decryptedPassword = masterPassword.storeKey?.decrypt(encryptedPassword, cipherLength: encryptedPassword.characters.count) {
+                if let decryptedPassword = masterPassword.storeKey?.decrypt(encryptedPassword, cipherLength: encryptedPassword.count) {
                     if let retString = NSString(data: decryptedPassword as Data, encoding: String.Encoding.utf8.rawValue) {
                         return retString as String
                     }

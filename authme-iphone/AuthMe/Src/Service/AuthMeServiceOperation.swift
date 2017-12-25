@@ -229,7 +229,7 @@ class AuthMeServiceOperation: Operation, NSURLConnectionDataDelegate {
             
             let statusError = "HTTP Error \(statusCode)"
             let userInfo = NSDictionary(object: statusError, forKey: NSLocalizedDescriptionKey as NSCopying)
-            error = NSError(domain: "DownloadUrlOperation", code: statusCode, userInfo: (userInfo as! [AnyHashable: Any]))
+            error = NSError(domain: "DownloadUrlOperation", code: statusCode, userInfo: (userInfo as! [AnyHashable: Any] as! [String : Any]))
             
             logger.log(.warn, message: statusError)
             

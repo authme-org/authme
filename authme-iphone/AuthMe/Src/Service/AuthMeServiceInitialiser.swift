@@ -114,7 +114,7 @@ class AuthMeServiceInitialiser : NSObject, AuthMeServiceDelegate, AuthMeSignDele
     }
     
     /* Worker task to create the RSA and AES service keys in the background */
-    func createServiceKeyWorker() {
+    @objc func createServiceKeyWorker() {
         
         /* Generate RSA key */
         

@@ -319,7 +319,7 @@ class MasterPassword : NSObject {
     
     // MARK: Store management
     
-    func createStoreWorker() {
+    @objc func createStoreWorker() {
     
         /* Used to generate the RSA key in the background and then switch back to the
          * main thread to close the alert window
@@ -534,7 +534,7 @@ class MasterPassword : NSObject {
         }
         
         /* Have to decode first */
-        let wrappedLength = wrappedSecret.characters.count
+        let wrappedLength = wrappedSecret.count
         if let rawSecret = Base64().base64decode(wrappedSecret, length: Int32(wrappedLength)) {
             let rawBytes = UnsafeMutablePointer<UInt8>(mutating: rawSecret.bytes.bindMemory(to: UInt8.self, capacity: rawSecret.length))
             // Size of WrapBufLen

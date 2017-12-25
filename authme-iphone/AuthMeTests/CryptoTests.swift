@@ -57,19 +57,19 @@ class CryptoTests: XCTestCase {
         // Encode tests
         
         let resultTest1 = b64.base64encode(inputTest1.data(using: String.Encoding.utf8, allowLossyConversion: false), length: Int32(inputTest1.lengthOfBytes(using: String.Encoding.utf8)))
-        XCTAssertEqual(resultTest1, outputTest1, "Test one in Base64 failed");
+        XCTAssertEqual(resultTest1! as String, outputTest1, "Test one in Base64 failed");
         let resultTest2 = b64.base64encode(inputTest2.data(using: String.Encoding.utf8, allowLossyConversion: false), length: Int32(inputTest2.lengthOfBytes(using: String.Encoding.utf8)))
-        XCTAssertEqual(resultTest2, outputTest2, "Test two in Base64 failed");
+        XCTAssertEqual(resultTest2! as String, outputTest2, "Test two in Base64 failed");
         let resultTest3 = b64.base64encode(inputTest3.data(using: String.Encoding.utf8, allowLossyConversion: false), length: Int32(inputTest3.lengthOfBytes(using: String.Encoding.utf8)))
-        XCTAssertEqual(resultTest3, outputTest3, "Test three in Base64 failed");
+        XCTAssertEqual(resultTest3! as String, outputTest3, "Test three in Base64 failed");
         
         // decode tests
         let resultTest11 = b64.base64decode(outputTest1, length: Int32(outputTest1.lengthOfBytes(using: String.Encoding.utf8)))
-        XCTAssertEqual(resultTest11, inputTest1.data(using: String.Encoding.utf8, allowLossyConversion: false)!, "Decode test 1 failed")
+        XCTAssertEqual(resultTest11! as Data, inputTest1.data(using: String.Encoding.utf8, allowLossyConversion: false)!, "Decode test 1 failed")
         let resultTest12 = b64.base64decode(outputTest2, length: Int32(outputTest2.lengthOfBytes(using: String.Encoding.utf8)))
-        XCTAssertEqual(resultTest12, inputTest2.data(using: String.Encoding.utf8, allowLossyConversion: false)!, "Decode test 2 failed")
+        XCTAssertEqual(resultTest12! as Data, inputTest2.data(using: String.Encoding.utf8, allowLossyConversion: false)!, "Decode test 2 failed")
         let resultTest13 = b64.base64decode(outputTest3, length: Int32(outputTest3.lengthOfBytes(using: String.Encoding.utf8)))
-        XCTAssertEqual(resultTest13, inputTest3.data(using: String.Encoding.utf8, allowLossyConversion: false)!, "Decode test 3 failed")
+        XCTAssertEqual(resultTest13! as Data, inputTest3.data(using: String.Encoding.utf8, allowLossyConversion: false)!, "Decode test 3 failed")
         
     }
     
@@ -91,7 +91,7 @@ class CryptoTests: XCTestCase {
         
         // Decrypt
         let decrypt = aes.decrypt(encrypted, cipherLength: size_t((encrypted?.lengthOfBytes(using: String.Encoding.utf8))!))
-        let decryptString = NSString(data: decrypt, encoding: String.Encoding.utf8) as! String
+        let decryptString = NSString(data: decrypt! as Data, encoding: String.Encoding.utf8.rawValue)! as String
         XCTAssertEqual(decryptString as String, raw, "Decrypt / Encrypt mismatch for AES")
         
         

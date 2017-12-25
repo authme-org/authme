@@ -239,7 +239,7 @@ class AuthListController: UITableViewController, MasterPasswordCallback, AuthMeS
     }
     
     // AuthList service interaction
-    func reloadAuths() {
+    @objc func reloadAuths() {
 
         if !serviceInitialised {
             return
